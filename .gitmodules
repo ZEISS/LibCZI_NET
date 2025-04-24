@@ -1,0 +1,3 @@
+[submodule "submodules/libCZI"]
+	path = submodules/libCZI
+	url = git@github.com:ptahmose/libczi-zeiss.git

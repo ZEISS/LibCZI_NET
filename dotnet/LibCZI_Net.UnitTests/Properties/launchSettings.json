@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "libCZI_Net.UnitTests": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

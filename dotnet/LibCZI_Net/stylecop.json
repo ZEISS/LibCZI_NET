@@ -1,0 +1,9 @@
+{
+    "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+    "settings": {
+        "documentationRules": {
+            "xmlHeader": false,
+            "copyrightText": "SPDX-FileCopyrightText: 2025 Carl Zeiss Microscopy GmbH\n\nSPDX-License-Identifier: MIT"
+        }
+    }
+}

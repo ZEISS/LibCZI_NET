@@ -1,0 +1,34 @@
+﻿// SPDX-FileCopyrightText: 2025 Carl Zeiss Microscopy GmbH
+//
+// SPDX-License-Identifier: MIT
+
+namespace LibCZI_Net.UnitTests
+{
+    using LibCZI_Net.Interface;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    internal class InputStreamsRepository
+    {
+        public static IInputStream CreateStreamFor4chLargeTiledDocument()
+        {
+            return Factory.CreateInputStream(
+                "curl_http_inputstream",
+                // "https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
+                "https://ptahmose.de/nextcloud/s/ZaFwaZxKpaMrbZo/download/2025_01_27__0007_offline_Zen_3_9_5.czi",
+                new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });
+
+        }
+
+        public static IInputStream CreateStreamFor3chWithLutDocument()
+        {
+            return Factory.CreateInputStream(
+                "curl_http_inputstream",
+                "https://ptahmose.de/nextcloud/s/NyLBdoKjxDaw4m9/download/DCV_30MB_gamma_spline.czi",
+                new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });
+        }
+    }
+}
