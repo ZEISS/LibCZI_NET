@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>libCZI_Net.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Text.Json" Version="7.0.2" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="runtimes/**/*.*" Pack="true" PackagePath="runtimes/" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	  <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+  	<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+  	  <PrivateAssets>all</PrivateAssets>
+  	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+  	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="LibCZI_Net.UnitTests" />
+  </ItemGroup>
+
+  <!-- Configuration for Nuget -->
+  <PropertyGroup>
+    <PackageId>LibCZIAPI</PackageId>
+    <!-- You can pass this via CLI : dotnet pack -p:Version=1.2.3 -c Release -->
+    <Version>$(version)</Version>
+    <Authors>ZEISS</Authors>
+    <Company>ZEISS</Company>
+    <Title>.NET integration for LibCZIAPI</Title>
+    <Description>.NET integration for libCZIAPI - cross-Platform C++ library to read and write CZI.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://PLEASE-UPDATE</PackageProjectUrl>
+    <!-- <PackageIcon>icon.png</PackageIcon> -->
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright 2023-2024 Carl Zeiss Microscopy GmbH</Copyright>
+    <PackageTags>CZI microscopy libCZI</PackageTags>
+    <PackageReadmeFile>docs/README.md</PackageReadmeFile>
+    <RepositoryUrl>https://PLEASE-UPDATE</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>This is an early alpha version.</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Content files to be included in the package -->
+    <None Include="Nuget-Assets\README.md" Pack="true" PackagePath="docs\" />
+  </ItemGroup>
+
+</Project>

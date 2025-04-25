@@ -1,0 +1,383 @@
+name: Build libCZIAPI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+    inputs:
+      pushtonuget:
+        description: "Deploy to Nuget?"
+        required: false
+        default: "false"
+
+permissions:
+  contents: read
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build-windows-x64:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true  # 'true' to check out all submodules recursively
+                            # Or use 'recursive' to check out submodules of submodules
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:/vcpkg/installed
+            C:/vcpkg/downloads
+            C:/vcpkg/packages
+          key: vcpkg-windows-x64-static-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || runner.os }}-${{ hashFiles('**/*.cmake') }}-${{ env.BUILD_TYPE }}
+          restore-keys: |
+            vcpkg-windows-x64-static-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || runner.os }}-
+            vcpkg-windows-x64-static-
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+           # shellcheck disable=SC2153
+           export SystemDrive=$SYSTEMDRIVE
+           # shellcheck disable=SC2153
+           export SystemRoot=$SYSTEMROOT
+           # shellcheck disable=SC2153
+           export windir=$WINDIR
+           vcpkg install azure-storage-blobs-cpp:x64-windows-static
+           vcpkg install azure-identity-cpp:x64-windows-static
+           vcpkg install 'curl[ssl]' --triplet x64-windows-static
+
+      - name: Configure CMake
+        run: |
+          cd "${{github.workspace}}/submodules/libCZI"
+          cmake -B "./build" `
+          -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} `
+          -DLIBCZI_BUILD_CZICMD=OFF `
+          -DLIBCZI_BUILD_DYNLIB=OFF `
+          -DLIBCZI_BUILD_CURL_BASED_STREAM=ON `
+          -DLIBCZI_BUILD_AZURESDK_BASED_STREAM=ON `
+          -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_LIBCURL=ON `
+          -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+          -DVCPKG_TARGET_TRIPLET=x64-windows-static `
+          -DLIBCZI_BUILD_UNITTESTS=OFF `
+          -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON=OFF `
+          -DLIBCZI_BUILD_LIBCZIAPI=ON `
+          -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary"
+
+      - name: Build C++
+        run: cmake --build ${{github.workspace}}/submodules/libCZI/build --config ${{env.BUILD_TYPE}} -j
+
+      - name: Upload Windows-x64 Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: libCZIAPI-windows-x64-binaries
+          path: ${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary
+
+
+  build-windows-arm64:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true  
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:/vcpkg/installed
+            C:/vcpkg/downloads
+            C:/vcpkg/packages
+          key: vcpkg-windows-arm64-static-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || runner.os }}-${{ hashFiles('**/*.cmake') }}-${{ env.BUILD_TYPE }}
+          restore-keys: |
+            vcpkg-windows-arm64-static-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || runner.os }}-
+            vcpkg-windows-arm64-static-
+      - name: Install dependencies
+        shell: bash
+        run: |
+           # shellcheck disable=SC2153
+           export SystemDrive=$SYSTEMDRIVE
+           # shellcheck disable=SC2153
+           export SystemRoot=$SYSTEMROOT
+           # shellcheck disable=SC2153
+           export windir=$WINDIR
+           vcpkg install azure-storage-blobs-cpp:arm64-windows-static
+           vcpkg install azure-identity-cpp:arm64-windows-static
+           vcpkg install 'curl[ssl]' --triplet arm64-windows-static
+      - name: Configure CMake
+        run: |
+          # Configure for a cross-compilation to ARM64.
+          # Note that since we are doing a cross compilation, we cannot execute code in order to determine platform
+          # characteristics like endianess and whether unaligned access is allowed. Therefore, we need to set the following
+          # variables manually: CRASH_ON_UNALIGNED_ACCESS=OFF and IS_BIG_ENDIAN=FALSE.
+          cd "${{github.workspace}}/submodules/libCZI"
+          cmake -A ARM64 -B "./build" `
+            -DCRASH_ON_UNALIGNED_ACCESS=OFF `
+            -DIS_BIG_ENDIAN=FALSE `
+            -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} `
+            -DLIBCZI_BUILD_CZICMD=OFF `
+            -DLIBCZI_BUILD_DYNLIB=OFF `
+            -DLIBCZI_BUILD_CURL_BASED_STREAM=ON `
+            -DLIBCZI_BUILD_AZURESDK_BASED_STREAM=ON `
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_LIBCURL=ON `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=arm64-windows-static `
+            -DLIBCZI_BUILD_UNITTESTS=OFF `
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON=OFF `
+            -DLIBCZI_BUILD_LIBCZIAPI=ON `
+            -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary"
+      - name: Build C++
+        run: cmake --build ${{github.workspace}}/submodules/libCZI/build --config ${{env.BUILD_TYPE}} -j
+      - name: Upload Windows-arm64 Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: libCZIAPI-windows-arm64-binaries
+          path: ${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary
+
+  build-linux-ubuntu22-x64:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/share/vcpkg/installed
+            /usr/local/share/vcpkg/downloads
+          key: vcpkg-linux-ubuntu22-x64-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || github.run_id }}
+          restore-keys: |
+            vcpkg-linux-ubuntu22-x64-
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+           sudo apt-get install libssl-dev -y
+           vcpkg install azure-storage-blobs-cpp azure-identity-cpp
+
+      - name: Configure CMake
+        run: |
+          cd "${{github.workspace}}/submodules/libCZI"
+          cmake -B "./build" \
+            -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+            -DLIBCZI_BUILD_CZICMD=OFF \
+            -DLIBCZI_BUILD_DYNLIB=OFF \
+            -DLIBCZI_BUILD_CURL_BASED_STREAM=ON \
+            -DLIBCZI_BUILD_AZURESDK_BASED_STREAM=ON \
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_LIBCURL=OFF \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -DLIBCZI_BUILD_UNITTESTS=OFF \
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON=OFF \
+            -DLIBCZI_BUILD_LIBCZIAPI=ON \
+            -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary"
+
+      - name: Build C++
+        run: cmake --build ${{github.workspace}}/submodules/libCZI/build --config ${{env.BUILD_TYPE}} -j "$(nproc)"
+
+      - name: Upload Ubuntu22-x64 Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: libCZIAPI-ubuntu22-x64-binaries
+          path: ${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary
+
+
+  build-linux-ubuntu24-x64:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/share/vcpkg/installed
+            /usr/local/share/vcpkg/downloads
+          key: vcpkg-linux-ubuntu24-x64-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || github.run_id }}
+          restore-keys: |
+            vcpkg-linux-ubuntu24-x64-
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+           sudo apt-get install libssl-dev -y
+           vcpkg install azure-storage-blobs-cpp azure-identity-cpp
+
+      - name: Configure CMake
+        run: |
+          cd "${{github.workspace}}/submodules/libCZI"
+          cmake -B "./build" \
+            -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+            -DLIBCZI_BUILD_CZICMD=OFF \
+            -DLIBCZI_BUILD_DYNLIB=OFF \
+            -DLIBCZI_BUILD_CURL_BASED_STREAM=ON \
+            -DLIBCZI_BUILD_AZURESDK_BASED_STREAM=ON \
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_LIBCURL=OFF \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_INSTALLATION_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -DLIBCZI_BUILD_UNITTESTS=OFF \
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON=OFF \
+            -DLIBCZI_BUILD_LIBCZIAPI=ON \
+            -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary"
+
+      - name: Build C++
+        run: cmake --build ${{github.workspace}}/submodules/libCZI/build --config ${{env.BUILD_TYPE}} -j "$(nproc)"
+
+      - name: Upload Ubuntu24-x64 Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: libCZIAPI-ubuntu24-x64-binaries
+          path: ${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary
+
+
+  build-macos-arm64:
+    runs-on: 	macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Cache vcpkg
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/vcpkg
+            ~/.cache/vcpkg
+            ~/Library/Caches/vcpkg
+          key: vcpkg-macos-arm64-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || runner.os }}-${{ hashFiles('**/*.cmake') }}-${{ env.BUILD_TYPE }}
+          restore-keys: |
+            vcpkg-macos-arm64-${{ hashFiles('**/vcpkg.json', '**/vcpkgdependencies.txt') || runner.os }}-
+            vcpkg-macos-arm64-
+
+      - name: install vcpkg
+        run: |
+          mkdir vcpkg
+          cd vcpkg
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          VCPKGTOOLCHAINFILE="$(pwd)/scripts/buildsystems/vcpkg.cmake"
+          ./bootstrap-vcpkg.sh
+          #./vcpkg install azure-storage-blobs-cpp azure-identity-cpp
+           echo "VCPKGTOOLCHAINFILE=$VCPKGTOOLCHAINFILE" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+           vcpkg/vcpkg/vcpkg install azure-storage-blobs-cpp azure-identity-cpp 'curl[sectransp]'
+
+      - name: Configure CMake
+        run: |
+          cd "${{github.workspace}}/submodules/libCZI"
+          # note that we instruct to link statically against libgcc and libstdc++ to avoid runtime dependencies
+          cmake  -B "./build" \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
+            -DLIBCZI_BUILD_CURL_BASED_STREAM=ON \
+            -DLIBCZI_BUILD_AZURESDK_BASED_STREAM=ON \
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_LIBCURL=OFF \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKGTOOLCHAINFILE}" \
+            -DLIBCZI_BUILD_UNITTESTS=OFF \
+            -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON=OFF \
+            -DLIBCZI_BUILD_DYNLIB=OFF \
+            -DLIBCZI_BUILD_LIBCZIAPI=ON \
+            -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary" 
+
+      - name: Build C++
+        run: cmake --build ${{github.workspace}}/submodules/libCZI/build --config ${{env.BUILD_TYPE}} -j "$(nproc)"
+
+      - name: Upload MacOS-AppleSilicon Binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: libCZIAPI-macos-applesilicon-binaries
+          path: ${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary
+
+
+
+  Prepare_Native_Binaries:
+    needs: [build-windows-x64, build-windows-arm64, build-linux-ubuntu22-x64, build-linux-ubuntu24-x64, build-macos-arm64]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download All Binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: binaries/
+
+      - name: Prepare Binaries
+        run: |
+          cd binaries
+          Get-ChildItem | Format-Table
+          $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-windows-x64-binaries\libCZIAPI.dll"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\win-x64\native"
+          New-Item -ItemType Directory -Force -Path $destDir
+          Copy-Item -Path $source -Destination (Join-Path $destDir "libCZIAPI.dll")
+
+          $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-windows-arm64-binaries\libCZIAPI.dll"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\win-arm64\native"
+          New-Item -ItemType Directory -Force -Path $destDir
+          Copy-Item -Path $source -Destination (Join-Path $destDir "libCZIAPI.dll")
+
+          $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-ubuntu22-x64-binaries\liblibCZIAPI.so"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\linux-x64\native"
+          New-Item -ItemType Directory -Force -Path $destDir
+          Copy-Item -Path $source -Destination (Join-Path $destDir "liblibCZIAPI.so")
+
+          $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-macos-applesilicon-binaries\liblibCZIAPI.dylib"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\osx-arm64\native"
+          New-Item -ItemType Directory -Force -Path $destDir
+          Copy-Item -Path $source -Destination (Join-Path $destDir "liblibCZIAPI.dylib")
+
+      - name: Read version from version.txt
+        id: read_version
+        shell: pwsh
+        run: |
+          $version = Get-Content "${{ github.workspace }}/version.txt" | Select-Object -First 1
+          $hash = (git rev-parse HEAD).Trim()
+          $fullversion = "$version-alpha+$hash"
+          echo "Version read: $version"
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+          echo "fullversion=$fullversion" >> $env:GITHUB_OUTPUT
+
+      - name: Build LibCZI_Net
+        run: |
+          cd dotnet
+          dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=${{ steps.read_version.outputs.version }}.0
+
+      - name: Package Nuget
+        run: |
+          cd dotnet
+          dotnet pack -p:Version=${{ steps.read_version.outputs.fullversion }} -c Release
+
+      - name: Upload Nuget as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Nuget
+          path: |
+            ${{github.workspace}}/dotnet/LibCZI_Net/bin/Release/*.nupkg
+
+      - name: Upload Nuget to nuget.org
+        # run this step only if the main branch is pushed to or if the workflow is manually triggered and configured to deploy
+        if: github.ref == 'refs/heads/main' || github.event.inputs.pushtonuget == 'true'
+        run: |
+          cd "${{ github.workspace }}/dotnet/LibCZI_Net/bin/Release/"
+          Get-ChildItem | Format-Table
+          $files = Get-ChildItem "${{ github.workspace }}/dotnet/LibCZI_Net/bin/Release/" -Filter *.nupkg
+          foreach ($file in $files) {
+            dotnet nuget push $file.FullName `
+            --api-key "${{ secrets.NUGETAPI_KEY }}" `
+            --source "https://api.nuget.org/v3/index.json"
+          }

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<package>
+    <metadata>
+        <!-- Required elements -->
+        <id>LibCZIAPI</id>
+        <version>$version$</version>
+        <description>.NET integration for libCZIAPI - API for Cross-Platform C++ library to read and write CZI.</description>
+        <authors>ZEISS</authors>
+        
+        <!-- Optional elements -->
+        <title>.NET integration for LibCZIAPI</title>
+        <owners>ZEISS</owners>
+        <license type="expression">MIT</license>
+        <projectUrl>https://dev.azure.com/ZEISSgroup/RMS-DEV/_git/RMS_PEARL</projectUrl>
+        <!-- <icon>$icon$</icon> -->
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <copyright>Copyright 2023-2024 Carl Zeiss Microscopy GmbH</copyright>
+        <tags>microscopy libCZI</tags>
+        <language>en-US</language>
+        <readme>docs/README.md</readme>
+        <releaseNotes>This is an early alpha version.</releaseNotes>
+        <dependencies>
+            <group targetFramework=".NETStandard2.0">
+                <dependency id="System.Memory" version="4.6.0"/>
+                <!-- using old version of System.Text.Json in order to be compatible with .NET Interactive. -->
+                <dependency id="System.Text.Json" version="7.0.2"/>
+                <dependency id="System.ValueTuple" version="4.5.0"/>
+                <!-- Optional but safe to include  -->
+                <dependency id="System.Buffers" version="4.6.0" />
+                <dependency id="System.Text.Encodings.Web" version="9.0.1" />
+                <dependency id="System.Runtime.CompilerServices.Unsafe" version="6.1.0" />              
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+      <file src="Nuget-Assets/README.md" target="docs/" />
+      <file src="LibCZI_Net.dll" target="lib/netstandard2.0/" />
+      <file src="LibCZI_Net.xml" target="lib/netstandard2.0/" />
+      <file src="runtimes/**" target="runtimes" />
+    </files>
+</package>
