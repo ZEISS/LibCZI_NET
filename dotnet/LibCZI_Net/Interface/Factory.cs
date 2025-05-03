@@ -29,6 +29,8 @@ namespace LibCZI_Net.Interface
 
         /// <summary>
         /// Creates an output stream object from an externally provided object implementing the IExternalOutputStream interface.
+        /// Note that ownership of the object 'externalOutputStream' is transferred to the library, which means that this
+        /// object will be disposed when the output-stream object is destroyed.
         /// </summary>
         /// <param name="externalOutputStream">The externally provided output stream object.</param>
         /// <returns>A wrapper for the specified external stream.</returns>

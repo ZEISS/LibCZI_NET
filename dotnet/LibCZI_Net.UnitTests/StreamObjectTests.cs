@@ -14,7 +14,7 @@ namespace LibCZI_Net.UnitTests
     using Xunit.Abstractions;
     using Xunit.Sdk;
 
-    public class StreamObjectTests
+    public partial class StreamObjectTests
     {
         private readonly ITestOutputHelper output;
 
@@ -165,6 +165,33 @@ namespace LibCZI_Net.UnitTests
             Assert.Equal(1, subBlockStatistics.MinimumMIndex);
             Assert.Equal(2, subBlockStatistics.MaximumMIndex);
             Assert.Equal("Z0:3C0:1T0:1S0:1", subBlockStatistics.DimensionBounds.AsString());
+        }
+
+        [Fact]
+        public void ExternalInputStreamCheckIfExceptionWithReadIsHandledProperlyTest()
+        {
+            using var inputStream = Factory.CreateInputStreamFromExternalStream(new ExternalInputStreamThrowsException());
+            using var reader = Factory.CreateReader();
+            Assert.ThrowsAny<Exception>(() =>
+            {
+                reader.Open(inputStream);
+            });
+        }
+    }
+
+    public partial class StreamObjectTests
+    {
+        private class ExternalInputStreamThrowsException : IExternalInputStream
+        {
+            public void Read(long offset, IntPtr data, long size, out long bytesRead)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Dispose()
+            {
+                // Dispose logic here
+            }
         }
     }
 }

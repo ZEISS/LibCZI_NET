@@ -104,6 +104,7 @@ namespace LibCZI_Net.Interop
             try
             {
                 this.libCziFree = NativeLibraryUtils.GetProcAddressThrowIfNotFound<LibCziFreeDelegate>(dllHandle, "libCZI_Free");
+                this.libCziAllocateMemory = NativeLibraryUtils.GetProcAddressThrowIfNotFound<LibCziAllocateMemoryDelegate>(dllHandle, "libCZI_AllocateMemory");
                 this.getLibCziVersionInfo = NativeLibraryUtils.GetProcAddressThrowIfNotFound<GetLibCziVersionInfoDelegate>(dllHandle, "libCZI_GetLibCZIVersionInfo");
                 this.getLibCziBuildInformation = NativeLibraryUtils.GetProcAddressThrowIfNotFound<GetLibCziBuildInformationDelegate>(dllHandle, "libCZI_GetLibCZIBuildInformation");
                 this.createInputStreamFromFileWide = NativeLibraryUtils.GetProcAddressThrowIfNotFound<CreateInputStreamFromFileWideDelegate>(dllHandle, "libCZI_CreateInputStreamFromFileWide");
@@ -296,6 +297,24 @@ namespace LibCZI_Net.Interop
         {
             this.ThrowIfNotInitialized();
             this.libCziFree(memory);
+        }
+
+        /// <summary>
+        /// Allocates memory.
+        /// </summary>
+        /// <param name="size">The size to allocate in bytes.</param>
+        /// <returns>A pointer to the allocated memory.</returns>
+        public IntPtr AllocateMemory(ulong size)
+        {
+            this.ThrowIfNotInitialized();
+            IntPtr memory = IntPtr.Zero;
+            unsafe
+            {
+                int returnCode = this.libCziAllocateMemory(size, &memory);
+                this.ThrowIfError(returnCode);
+            }
+
+            return memory;
         }
 
         /// <summary>
@@ -554,8 +573,8 @@ namespace LibCZI_Net.Interop
             unsafe
             {
                 ReaderOpenInfoInterop readerOpenInfoInterop = new ReaderOpenInfoInterop { streamObject = inputStreamHandle };
-
-                this.readerOpen(readerHandle, &readerOpenInfoInterop);
+                int returnCode = this.readerOpen(readerHandle, &readerOpenInfoInterop);
+                this.ThrowIfError(returnCode);
             }
         }
 
@@ -1799,6 +1818,7 @@ namespace LibCZI_Net.Interop
         private static readonly OutputStreamCloseFunctionDelegate OutputStreamCloseFunctionDelegateObject = LibCziApiInterop.CloseOutputStreamFunctionCallback;
 
         private readonly LibCziFreeDelegate libCziFree;
+        private readonly LibCziAllocateMemoryDelegate libCziAllocateMemory;
         private readonly GetLibCziVersionInfoDelegate getLibCziVersionInfo;
         private readonly GetLibCziBuildInformationDelegate getLibCziBuildInformation;
         private readonly CreateReaderDelegate createReader;
@@ -1888,11 +1908,13 @@ namespace LibCZI_Net.Interop
         private delegate void LibCziFreeDelegate(IntPtr ptr);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        private unsafe delegate int LibCziAllocateMemoryDelegate(ulong size, IntPtr* ptr);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private unsafe delegate int GetLibCziVersionInfoDelegate(LibCziVersionInfoInterop* libCziVersionInfoInterop);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-        private unsafe delegate int GetLibCziBuildInformationDelegate(
-            LibCziBuildInformationInterop* buildInformationInterop);
+        private unsafe delegate int GetLibCziBuildInformationDelegate(LibCziBuildInformationInterop* buildInformationInterop);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private unsafe delegate int CreateReaderDelegate(IntPtr* readerObjectHandle);
@@ -2169,8 +2191,8 @@ namespace LibCZI_Net.Interop
             public int error_code;
 
             /// <summary> The error message (zero-terminated UTF8-encoded string). This string must be
-            ///           allocated with 'libCZI_AllocateString'.</summary>
-            private IntPtr error_message;
+            ///           allocated with 'libCZI_AllocateMemory'.</summary>
+            public IntPtr error_message;
         }
 
         [StructLayout(LayoutKind.Sequential, Pack = 4)]
@@ -2675,6 +2697,28 @@ namespace LibCZI_Net.Interop
             return &statisticsInteropEx->perScenesBoundingBoxes0 + index;
         }
 
+        private static IntPtr ConvertToZeroTerminatedUtf8LibCziAllocated(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+            {
+                return IntPtr.Zero;
+            }
+
+            byte[] utf8Bytes = NativeLibraryUtils.ConvertToUtf8ByteArray(s);
+            IntPtr utf8StringLibCziAllocated = LibCziApiInterop.Instance.AllocateMemory(1 + (ulong)utf8Bytes.Length);
+            Marshal.Copy(utf8Bytes, 0, utf8StringLibCziAllocated, utf8Bytes.Length);
+            Marshal.WriteByte(utf8StringLibCziAllocated, utf8Bytes.Length, 0); // zero-terminate
+            return utf8StringLibCziAllocated;
+        }
+
+        private static ExternalStreamErrorInfoInterop CreateExternalStreamErrorInfoInterop(int errorCode, string errorMessage)
+        {
+            ExternalStreamErrorInfoInterop errorInfo = default(ExternalStreamErrorInfoInterop);
+            errorInfo.error_code = errorCode;
+            errorInfo.error_message = LibCziApiInterop.ConvertToZeroTerminatedUtf8LibCziAllocated(errorMessage);
+            return errorInfo;
+        }
+
         private static unsafe ValueTuple<int, BoundingBoxPerScene>[] GetBoundingBoxes(SubBlockStatisticsInteropEx* statisticsInteropEx)
         {
             var result = new List<ValueTuple<int, BoundingBoxPerScene>>(statisticsInteropEx->numberOfScenes);
@@ -2696,10 +2740,18 @@ namespace LibCZI_Net.Interop
             InputStreamData inputStreamData = (InputStreamData)GCHandle.FromIntPtr(opaqueHandle1).Target;
 
             // TODO(JBL): implement error handling (and unit tests for it!)
-            inputStreamData.ExternalInputStream.Read(offset, data, size, out *bytesRead);
-            *errorInfo = default(ExternalStreamErrorInfoInterop);
-
-            return 0;
+            try
+            {
+                inputStreamData.ExternalInputStream.Read(offset, data, size, out *bytesRead);
+                *errorInfo = default(ExternalStreamErrorInfoInterop);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                *errorInfo = CreateExternalStreamErrorInfoInterop(1, e.Message);
+                Console.WriteLine(e);
+                return 1;   // this is kStreamErrorCode_UnspecifiedError
+            }
         }
 
         private static unsafe int WriteFunctionCallback(IntPtr opaqueHandle1, IntPtr opaqueHandle2, long offset, IntPtr data, long size, long* bytesWritten, ExternalStreamErrorInfoInterop* errorInfo)
