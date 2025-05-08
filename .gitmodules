@@ -1,4 +1,4 @@
 [submodule "submodules/libCZI"]
 	path = submodules/libCZI
-	url = https://github.com/ptahmose/libczi-zeiss
-	branch = jbl/libCZI-C-API
+	url = https://github.com/ZEISS/libczi
+	branch = main
