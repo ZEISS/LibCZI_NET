@@ -55,3 +55,5 @@ nunit-*.xml
 
 .vs/
 dotnet/LibCZI_Net/runtimes/
+dotnet/docfx/LibCZI_Net/
+dotnet/docfx/_site/
