@@ -28,7 +28,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       # docfx to build the documentation for the .NET part
-      # (main motivation for using docfx was that doxygen does not understand latest C# language features)
       - name: docfx action for LibCZI_Net
         run: |
           dotnet tool update -g docfx
@@ -39,7 +38,7 @@ jobs:
           rm docfx.json
           rm toc.yml
           rm index.md
-      - name: Prepare doxygen-generated documentation for upload
+      - name: Prepare docfx-generated documentation for upload
         run: |
           mkdir ${{github.workspace}}/documentation
           mkdir ${{github.workspace}}/documentation/LibCZI_Net

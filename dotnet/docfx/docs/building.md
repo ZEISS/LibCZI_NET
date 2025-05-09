@@ -87,7 +87,7 @@ After downloading the LibCZIAPI NuGet package, it is important to verify that th
 ```
 
 ## How to Build Documentation
-This guide provides instructions for generating the documentation for the LibCZI_Net using docfx. For the latter, the source files are located in the dotnet/docfx/docs folder.
+This guide provides instructions for generating the documentation for the LibCZI_Net using Docfx. For the latter, the source files are located in the dotnet/docfx/docs folder.
 
 To compile the documentation, follow these steps:
 
