@@ -281,7 +281,7 @@ jobs:
       - name: Configure CMake
         run: |
           cd "${{github.workspace}}/submodules/libCZI"
-          # note that we instruct to link statically against libgcc and libstdc++ to avoid runtime dependencies
+          # note that we instruct to link statically against libgcc and libstdc++ to avoid runtime dependencies.
           cmake  -B "./build" \
             -G Ninja \
             -DCMAKE_BUILD_TYPE="${BUILD_TYPE}" \
