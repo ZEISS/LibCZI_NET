@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: true  # 'true' to check out all submodules recursively
-                            # Or use 'recursive' to check out submodules of submodules
+                            # Or use 'recursive' to check out submodules of submodules.
 
       - name: Cache vcpkg
         uses: actions/cache@v4
