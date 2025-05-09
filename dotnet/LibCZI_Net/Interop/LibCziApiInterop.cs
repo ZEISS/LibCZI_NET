@@ -2739,7 +2739,6 @@ namespace LibCZI_Net.Interop
         {
             InputStreamData inputStreamData = (InputStreamData)GCHandle.FromIntPtr(opaqueHandle1).Target;
 
-            // TODO(JBL): implement error handling (and unit tests for it!)
             try
             {
                 inputStreamData.ExternalInputStream.Read(offset, data, size, out *bytesRead);
@@ -2749,7 +2748,6 @@ namespace LibCZI_Net.Interop
             catch (Exception e)
             {
                 *errorInfo = CreateExternalStreamErrorInfoInterop(1, e.Message);
-                Console.WriteLine(e);
                 return 1;   // this is kStreamErrorCode_UnspecifiedError
             }
         }
@@ -2758,11 +2756,17 @@ namespace LibCZI_Net.Interop
         {
             OutputStreamData outputStreamData = (OutputStreamData)GCHandle.FromIntPtr(opaqueHandle1).Target;
 
-            // TODO(JBL): implement error handling (and unit tests for it!)
-            outputStreamData.ExternalOutputStream.Write(offset, data, size, out *bytesWritten);
-            *errorInfo = default(ExternalStreamErrorInfoInterop);
-
-            return 0;
+            try
+            {
+                outputStreamData.ExternalOutputStream.Write(offset, data, size, out *bytesWritten);
+                *errorInfo = default(ExternalStreamErrorInfoInterop);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                *errorInfo = CreateExternalStreamErrorInfoInterop(1, e.Message);
+                return 1;   // this is kStreamErrorCode_UnspecifiedError
+            }
         }
 
         private static void CloseInputStreamFunctionCallback(IntPtr opaqueHandle1, IntPtr opaqueHandle2)

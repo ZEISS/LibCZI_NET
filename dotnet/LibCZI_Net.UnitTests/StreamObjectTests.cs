@@ -170,20 +170,44 @@ namespace LibCZI_Net.UnitTests
         [Fact]
         public void ExternalInputStreamCheckIfExceptionWithReadIsHandledProperlyTest()
         {
-            using var inputStream = Factory.CreateInputStreamFromExternalStream(new ExternalInputStreamThrowsException());
+            using var inputStream = Factory.CreateInputStreamFromExternalStream(new ExternalInputStreamThrowingException());
             using var reader = Factory.CreateReader();
             Assert.ThrowsAny<Exception>(() =>
             {
                 reader.Open(inputStream);
             });
         }
+
+        [Fact]
+        public void ExternalOutputStreamCheckIfExceptionWithReadIsHandledProperlyTest()
+        {
+            using var outputStream = Factory.CreateOutputStreamFromExternalStream(new ExternalOutputStreamThrowingException());
+            using var writer = Factory.CreateWriter();
+            Assert.ThrowsAny<Exception>(() =>
+            {
+                writer.Open(outputStream);
+            });
+        }
     }
 
     public partial class StreamObjectTests
     {
-        private class ExternalInputStreamThrowsException : IExternalInputStream
+        private class ExternalInputStreamThrowingException : IExternalInputStream
         {
             public void Read(long offset, IntPtr data, long size, out long bytesRead)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Dispose()
+            {
+                // Dispose logic here
+            }
+        }
+
+        private class ExternalOutputStreamThrowingException : IExternalOutputStream
+        {
+            public void Write(long offset, IntPtr data, long size, out long bytesWritten)
             {
                 throw new NotImplementedException();
             }
