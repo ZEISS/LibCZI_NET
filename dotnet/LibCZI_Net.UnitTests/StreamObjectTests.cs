@@ -6,7 +6,6 @@ namespace LibCZI_Net.UnitTests
 {
     using Interface;
     using Interop;
-    using Microsoft.VisualStudio.TestPlatform.Utilities;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -14,6 +13,10 @@ namespace LibCZI_Net.UnitTests
     using Xunit.Abstractions;
     using Xunit.Sdk;
 
+    /// <summary> 
+    /// Unit-tests for the "stream-object functionality". This includes tests concerned
+    /// with the "external-streams-functionality".
+    /// </summary>
     public partial class StreamObjectTests
     {
         private readonly ITestOutputHelper output;
@@ -170,6 +173,11 @@ namespace LibCZI_Net.UnitTests
         [Fact]
         public void ExternalInputStreamCheckIfExceptionWithReadIsHandledProperlyTest()
         {
+            // We create an external input stream using an object that throws an exception upon invocation.
+            // We then check that an exception is thrown when we try to read from the stream. Since the error handling
+            // in this case straddles the managed/unmanaged boundary, it is non-trivial that the exception is properly
+            // thrown in the managed code below.
+            // TODO(JBL): when the error handling is refined, we should adapt this test to check for the specific exception type.
             using var inputStream = Factory.CreateInputStreamFromExternalStream(new ExternalInputStreamThrowingException());
             using var reader = Factory.CreateReader();
             Assert.ThrowsAny<Exception>(() =>
@@ -181,6 +189,9 @@ namespace LibCZI_Net.UnitTests
         [Fact]
         public void ExternalOutputStreamCheckIfExceptionWithReadIsHandledProperlyTest()
         {
+            // We create an external output stream using an object that throws an exception upon invocation.
+            // We then check that an exception is thrown when we try to write to the stream.
+            // TODO(JBL): when the error handling is refined, we should adapt this test to check for the specific exception type.
             using var outputStream = Factory.CreateOutputStreamFromExternalStream(new ExternalOutputStreamThrowingException());
             using var writer = Factory.CreateWriter();
             Assert.ThrowsAny<Exception>(() =>
@@ -190,8 +201,15 @@ namespace LibCZI_Net.UnitTests
         }
     }
 
+    /// <content>
+    /// Internally used classes for the tests are found here.
+    /// </summary>
     public partial class StreamObjectTests
     {
+        /// <summary>
+        /// Implementation of the 'IExternalInputStream' which throws an exception upon
+        /// invocation.
+        /// </summary>
         private class ExternalInputStreamThrowingException : IExternalInputStream
         {
             public void Read(long offset, IntPtr data, long size, out long bytesRead)
@@ -201,10 +219,14 @@ namespace LibCZI_Net.UnitTests
 
             public void Dispose()
             {
-                // Dispose logic here
+                // nothing to do
             }
         }
 
+        /// <summary>
+        /// Implementation of the 'IExternalOutputStream' which throws an exception upon
+        /// invocation.
+        /// </summary>
         private class ExternalOutputStreamThrowingException : IExternalOutputStream
         {
             public void Write(long offset, IntPtr data, long size, out long bytesWritten)
@@ -214,7 +236,7 @@ namespace LibCZI_Net.UnitTests
 
             public void Dispose()
             {
-                // Dispose logic here
+                // nothing to do
             }
         }
     }
