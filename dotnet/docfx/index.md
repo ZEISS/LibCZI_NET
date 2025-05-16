@@ -8,7 +8,7 @@ _layout: landing
 
 LibCZI_Net enables the utilization of [libczi](https://github.com/ZEISS/libczi) functionalities within the .NET environment.
 
-Main Documentation can be found [here](docs/).
+Getting-started Documentation can be found [here](docs/getting-started.md).
 
 How to Build Documentation can be found [here](docs/building.md).
 

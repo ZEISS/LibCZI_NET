@@ -1,6 +1,3 @@
 ﻿items:
 - name: Home
   href: index.md
-- name: Docs
-  href: docs/
-  homepage: docs/getting-started.md
