@@ -1,6 +1,6 @@
-﻿﻿items:
-  - name: Docs
-    href: docs/
-    items:
-      - name: LibCZI_Net
-        href: LibCZI_Net/
+﻿items:
+- name: Home
+  href: index.md
+- name: Docs
+  href: docs/
+  homepage: docs/getting-started.md
