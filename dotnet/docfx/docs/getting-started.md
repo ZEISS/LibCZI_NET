@@ -1,7 +1,6 @@
 # Getting Started
 This guide demonstrates how to get started with the "LibCZI_NET" library, including how to open a CZI file, read subblocks, attachments, metadata, and extract information.
 
-TODO Hakan Maybe add some section about IDisposable
 ## Reading a CZI-file
 To begin reading a '.czi' file, use "InputStream" along with reader from 'Factory.CreateReader()':
 
@@ -132,7 +131,7 @@ You can use XPath queries like //Expriment/UserName or //Image/Channel/@Name to 
 ```
 
 ### Accessing Attachments
-Attatchments in a CZI file contain additional data such as thumbnails, timestamps, event logs, and preview images.
+Attachments in a CZI file contain additional data such as thumbnails, timestamps, event logs, and preview images.
 
 After opening a file, you can check number of available attachments:
 
@@ -153,7 +152,7 @@ Each attachment info includes:
 - ContentFileType: The format.
 - Name: Logical name.
 
-You can also retrieve a specific attahment by locating its index using its GUID or name:
+You can also retrieve a specific attachment by locating its index using its GUID or name:
 
 ```cs
     Guid thumbnailGuid = new Guid("{ffffffff-ffff-ffff-ffff-ffffffff}");
@@ -163,7 +162,7 @@ You can also retrieve a specific attahment by locating its index using its GUID 
 ```
 
 ## Writing a CZI-file
-The IWriter interface in LibCZI_Net provides functionality to create and write CZI files, including image subblocks, metadata, and attachments.
+The IWriter interface in LibCZI_Net defines functionality to create and write CZI files, including image subblocks, metadata, and attachments.
 
 ### Creating an OutputStream and Initializing the Writer
 To create a new file, initialize an IOutputStream and use it to open an IWriter instance:

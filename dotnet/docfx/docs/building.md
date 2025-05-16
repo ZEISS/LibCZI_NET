@@ -1,6 +1,6 @@
 # LibCZI_Net
 
-LibCZI_Net aims to facilitate binding for C# .NET. It uses the libCZI_API NuGet package, which serves as a bridge between the LibCZI_Net and the [libczi](https://github.com/ZEISS/libczi).
+LibCZI_Net is a C# binding NuGet package for .NET, which serves as a bridge between the LibCZI_Net and the [libCZI](https://github.com/ZEISS/libczi).
 
 - It features:
 	- Reading and writing metadata.
@@ -55,7 +55,7 @@ This step is optional but recommended to verify that the build is functioning as
 ## Versioning
 
 To ensure consistency and reliability, the LibCZI_Net uses semantic versioning scheme 2.0. This approach provides a structured method for version control, allowing developers to understand the nature of changes and updates made to the .Net binding. The version number is meticulously maintained in the top-level version.txt file, which serves as the definitive source for version information. It is crucial that any modifications to the project are accompanied by an appropriate update to this version number, reflecting the scope and impact of the changes.
-Note that the number defined in the  [VersionNumber](https://github.com/ZEISS/LibCZI_NET/blob/main/version.txt) text file. The version statement allows for four numbers: ``<major>.<minor>.<patch>.<tweak>``. The number for ``<tweak>`` has no semantic meaning.
+Note that the number is defined in the  [VersionNumber](https://github.com/ZEISS/LibCZI_NET/blob/main/version.txt) text file. The version statement allows for four numbers: ``<major>.<minor>.<patch>.<tweak>``. The number for ``<tweak>`` has no semantic meaning.
 
 ## NuGet Package
 
