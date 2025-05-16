@@ -137,7 +137,7 @@ Attatchments in a CZI file contain additional data such as thumbnails, timestamp
 After opening a file, you can check number of available attachments:
 
 ```cs
-    ìnt count = reader.GetAttachmentsCount();
+    int count = reader.GetAttachmentsCount();
 ```
 To retrieve details about each one:
 ```cs
