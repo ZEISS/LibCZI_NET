@@ -1,0 +1,57 @@
+# Simple workflow for deploying static content to GitHub Pages
+name: Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+  workflow_dispatch:    
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      # docfx to build the documentation for the .NET part
+      - name: docfx action for LibCZI_Net
+        run: |
+          dotnet tool update -g docfx
+          cd dotnet/docfx
+          docfx
+          # currently, we are building the documentation in-tree, and we are manually
+          # deleting the files from the repo here
+          rm docfx.json
+          rm toc.yml
+          rm index.md
+      - name: Prepare docfx-generated documentation for upload
+        run: |
+          mkdir ${{github.workspace}}/documentation
+          mkdir ${{github.workspace}}/documentation/LibCZI_Net
+          cp -r ${{github.workspace}}/dotnet/docfx/* ${{github.workspace}}/documentation/LibCZI_Net
+          # add a "top-level-HTML-file" redirecting to the actual documentation
+          echo "<meta http-equiv=\"Refresh\" content=\"0; url='LibCZI_Net/'\" />" >> ${{github.workspace}}/documentation/index.html
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./documentation"
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

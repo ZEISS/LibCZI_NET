@@ -1,0 +1,38 @@
+{
+    "metadata": [
+        {
+            "src": [
+                {
+                    "files": [ "*.csproj" ],
+                    "src": "../LibCZI_Net"
+                }
+            ],
+            "dest": "LibCZI_Net"
+        }
+    ],
+    "build": {
+        "content": [
+            {
+                "files": [ "**/*.{md,yml}" ]
+            }
+        ],
+        "resource": [
+            {
+                "files": [ "images/**", "docs/assets/**" ]
+            }
+        ],
+        "output": "_site",
+        "template": [
+            "default",
+            "modern",
+            "statictoc"
+        ],
+        "globalMetadata": {
+            "_appName": "LibCZI_Net",
+            "_appTitle": "LibCZI_Net",
+            "_appLogoPath": "images/logo.svg",
+            "_enableSearch": true,
+            "pdf": false
+        }
+    }
+}
