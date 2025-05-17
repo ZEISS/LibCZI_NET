@@ -4,7 +4,7 @@ _layout: landing
 
 # Welcome to **LibCZI_Net**
 
-![LibCZI_Net Logo](./images/LibCZI_Net.png)
+![LibCZI_Net Logo](images/LibCZI_Net.png)
 
 LibCZI_Net enables the utilization of [libczi](https://github.com/ZEISS/libczi) functionalities within the .NET environment.
 
