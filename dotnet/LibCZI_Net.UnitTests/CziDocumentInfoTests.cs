@@ -27,21 +27,6 @@ namespace LibCZI_Net.UnitTests
         [Fact]
         public void GetScalingInformationScenario1()
         {
-            //IInputStream inputStream;
-            //try
-            //{
-            //    inputStream = Factory.CreateInputStream(
-            //        "curl_http_inputstream",
-            //        // "https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
-            //        "https://ptahmose.de/nextcloud/s/ZaFwaZxKpaMrbZo/download/2025_01_27__0007_offline_Zen_3_9_5.czi",
-            //        new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });
-            //}
-            //catch (Exception ex)
-            //{
-            //    this.output.WriteLine(
-            //        $"Creating the input-stream failed to exception: {ex.Message}. Assuming this is due to problems like 'resource not available', no internet or the like, we skip this test.");
-            //    return; // Exit the test early
-            //}
             IInputStream inputStream;
             try
             {

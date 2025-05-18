@@ -5,16 +5,11 @@
 namespace LibCZI_Net.UnitTests
 {
     using System;
-    using System.Collections.Generic;
     using FluentAssertions;
     using LibCZI_Net.Interface;
     using Xunit.Abstractions;
 
     using SixLabors.ImageSharp;
-    /*    using SixLabors.ImageSharp.PixelFormats;
-        using SixLabors.ImageSharp.Processing;
-        using SixLabors.ImageSharp.Formats.Png;
-    */
 
     public class AccessorTests
     {
@@ -31,11 +26,6 @@ namespace LibCZI_Net.UnitTests
             IInputStream inputStream;
             try
             {
-                //inputStream = Factory.CreateInputStream(
-                //    "curl_http_inputstream",
-                //     //"https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
-                //     "https://ptahmose.de/nextcloud/s/ZaFwaZxKpaMrbZo/download/2025_01_27__0007_offline_Zen_3_9_5.czi",
-                //    new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });
                 inputStream = InputStreamsRepository.CreateStreamFor4chLargeTiledDocument();
             }
             catch (Exception ex)
@@ -78,11 +68,6 @@ namespace LibCZI_Net.UnitTests
             IInputStream inputStream;
             try
             {
-                /*inputStream = Factory.CreateInputStream(
-                    "curl_http_inputstream",
-                     //"https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
-                     "https://ptahmose.de/nextcloud/s/ZaFwaZxKpaMrbZo/download/2025_01_27__0007_offline_Zen_3_9_5.czi",
-                    new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });*/
                 inputStream = InputStreamsRepository.CreateStreamFor4chLargeTiledDocument();
             }
             catch (Exception ex)
@@ -94,8 +79,6 @@ namespace LibCZI_Net.UnitTests
 
             using var reader = Factory.CreateReader();
             reader.Open(inputStream);
-
-            //// var statistics = reader.GetSimpleStatistics();
 
             using var accessor = reader.CreateSingleChannelTileAccessor();
 

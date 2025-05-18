@@ -27,10 +27,6 @@ namespace LibCZI_Net.UnitTests
             IInputStream inputStream;
             try
             {
-                /*inputStream = Factory.CreateInputStream(
-                    "curl_http_inputstream",
-                    "https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
-                    new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });*/
                 inputStream = InputStreamsRepository.CreateStreamFor4chLargeTiledDocument();
             }
             catch (Exception ex)
@@ -53,10 +49,6 @@ namespace LibCZI_Net.UnitTests
             IInputStream inputStream;
             try
             {
-                /*inputStream = Factory.CreateInputStream(
-                    "curl_http_inputstream",
-                    "https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
-                    new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });*/
                 inputStream = InputStreamsRepository.CreateStreamFor4chLargeTiledDocument();
             }
             catch (Exception ex)
@@ -92,10 +84,6 @@ namespace LibCZI_Net.UnitTests
             IInputStream inputStream;
             try
             {
-                /*inputStream = Factory.CreateInputStream(
-                    "curl_http_inputstream",
-                    "https://zenodo.org/records/14968770/files/2025_01_27__0007_offline_Zen_3_9_5.czi?download=1",
-                    new Dictionary<string, object>() { { StreamClassPropertyKeys.CurlHttpUserAgent, "libCZI" }, });*/
                 inputStream = InputStreamsRepository.CreateStreamFor4chLargeTiledDocument();
             }
             catch (Exception ex)
