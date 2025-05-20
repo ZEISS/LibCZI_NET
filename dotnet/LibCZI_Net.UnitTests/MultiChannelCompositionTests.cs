@@ -6,12 +6,8 @@ namespace LibCZI_Net.UnitTests
 {
     using FluentAssertions;
     using LibCZI_Net.Interface;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using SixLabors.ImageSharp;
+    using System;
     using Xunit.Abstractions;
 
     public class MultiChannelCompositionTests

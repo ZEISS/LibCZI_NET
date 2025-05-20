@@ -11,7 +11,6 @@ namespace LibCZI_Net.UnitTests
     using System.Linq;
     using Xunit;
     using Xunit.Abstractions;
-    using Xunit.Sdk;
 
     /// <summary> 
     /// Unit-tests for the "stream-object functionality". This includes tests concerned
@@ -203,7 +202,7 @@ namespace LibCZI_Net.UnitTests
 
     /// <content>
     /// Internally used classes for the tests are found here.
-    /// </summary>
+    /// </content>
     public partial class StreamObjectTests
     {
         /// <summary>

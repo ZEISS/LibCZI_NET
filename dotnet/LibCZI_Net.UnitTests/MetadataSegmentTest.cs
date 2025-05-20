@@ -6,10 +6,6 @@ namespace LibCZI_Net.UnitTests
 {
     using LibCZI_Net.Interface;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Xml.XPath;
     using Xunit;
     using Xunit.Abstractions;

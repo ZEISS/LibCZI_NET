@@ -5,11 +5,6 @@
 namespace LibCZI_Net.UnitTests
 {
     using LibCZI_Net.Interface;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Xunit;
 
     public class ReaderTests

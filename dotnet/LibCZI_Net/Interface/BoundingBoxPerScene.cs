@@ -4,10 +4,6 @@
 
 namespace LibCZI_Net.Interface
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     /// <summary>
     /// Represents the bounding box information for a scene.
     /// </summary>
@@ -23,8 +19,6 @@ namespace LibCZI_Net.Interface
             this.BoundingBox = boundingBox;
             this.BoundingBoxLayer0 = boundingBoxLayer0;
         }
-
-        // public int sceneIndex { get; }
 
         /// <summary>
         /// Gets the bounding box.

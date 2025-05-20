@@ -5,8 +5,6 @@
 namespace LibCZI_Net.Implementation
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     /// <summary>
     /// Private interface that exposes a handle to an unmanaged resource.
