@@ -57,3 +57,4 @@ nunit-*.xml
 dotnet/LibCZI_Net/runtimes/
 dotnet/docfx/LibCZI_Net/
 dotnet/docfx/_site/
+dotnet/LibCZI_Net.UnitTests/Properties/launchSettings.json
