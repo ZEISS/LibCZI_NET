@@ -1,9 +1,13 @@
 # LibCZI_Net
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## What
-LibCZI_Net is an Open Source C# library to read and write [CZI](https://www.zeiss.com/microscopy/en/products/software/zeiss-zen/czi-image-file-format.html) by using libCZI_API that enables libCZI functionalties.
+
+LibCZI_Net is .NET-library, providing .NET-bindings for [libCZI](https://github.com/ZEISS/libczi).  
+It aims to give a rich and easy-to-use API for reading and writing [CZI files](https://www.zeiss.com/microscopy/en/products/software/zeiss-zen/czi-image-file-format.html)files in .NET applications.
 
 ## Why
+
 LibCZI_Net is a library intended for providing read and write access to [CZI](https://www.zeiss.com/microscopy/en/products/software/zeiss-zen/czi-image-file-format.html) featuring:
 
 * reading subblocks and get the content as a bitmap
@@ -12,3 +16,11 @@ LibCZI_Net is a library intended for providing read and write access to [CZI](ht
 * composing multi-channel images with tinting and applying a gradation curve
 * access metadata
 * writing subblocks and metadata
+
+
+## Guidelines
+[Code of Conduct](./CODE_OF_CONDUCT.md)  
+[Contributing](./CONTRIBUTING.md)
+
+## Disclaimer
+ZEISS, ZEISS.com are registered trademarks of Carl Zeiss AG.
