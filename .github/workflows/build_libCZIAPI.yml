@@ -413,7 +413,7 @@ jobs:
         run: |
           # here we must export the version environment variable since the
           # prepare-package-ref.sh depends on this
-          export version=${{ sneeds.prepare-native-binaries.outputs.fullversion }}
+          export version=${{ needs.prepare-native-binaries.outputs.fullversion }}
           cd ./dotnet/scripts
           ./prepare-package-ref.sh
           cd ../LibCZI_Net.UnitTests
