@@ -1,6 +1,7 @@
 # LibCZI_Net
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![REUSE status](https://api.reuse.software/badge/github.com/ZEISS/LibCZI_NET)](https://api.reuse.software/info/github.com/ZEISS/LibCZI_NET)
+[![CodeQL](https://github.com/ZEISS/LibCZI_NET/actions/workflows/codeql.yml/badge.svg?branch=main&event=push)](https://github.com/ZEISS/LibCZI_NET/actions/workflows/codeql.yml)
 [![GitHub Pages](https://github.com/ZEISS/LibCZI_NET/actions/workflows/pages.yml/badge.svg?branch=main&event=push)](https://github.com/ZEISS/LibCZI_NET/actions/workflows/pages.yml)
 
 ## What
