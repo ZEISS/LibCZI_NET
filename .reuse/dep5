@@ -3,7 +3,7 @@ Upstream-Name: LibCZI_NET
 Upstream-Contact: Carl Zeiss Microscopy GmbH <github.microscopy@zeiss.com>
 Source: https://github.com/ZEISS/LibCZI_NET
 
-Files: .github/* dotnet/docfx/* .gitignore .gitmodules README.md LICENSE CODE_OF_CONDUCT.md CONTRIBUTING.md README.md SECURITY.md cla_corporate.txt cla_individual.txt THIRD_PARTY_LICENSES.txt version.txt, dotnet/LibCZI_Net/scripts/prepare-package-ref.sh
+Files: .github/* dotnet/docfx/* .gitignore .gitmodules README.md LICENSE CODE_OF_CONDUCT.md CONTRIBUTING.md README.md SECURITY.md cla_corporate.txt cla_individual.txt THIRD_PARTY_LICENSES.txt version.txt
 Copyright: 2025 Carl Zeiss Microscopy GmbH
 License: MIT
 
