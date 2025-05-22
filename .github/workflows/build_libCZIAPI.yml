@@ -353,15 +353,12 @@ jobs:
 
       - name: Build LibCZI_Net
         run: |
-          version=${{ steps.read_version.outputs.version }}.0
-          echo "Building for version number $version"
           cd dotnet
-          dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=$version
+          dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=${{ steps.read_version.outputs.version }}.0
 
       - name: Test LibCZI_Net
         run: |
           cd dotnet
-          echo "Testing for version number $version"
           dotnet test --logger "console;verbosity=detailed"
 
       - name: Package Nuget
@@ -411,7 +408,7 @@ jobs:
         run: |
           # here we must export the version environment variable since the
           # prepare-package-ref.sh depends on this
-          export version=$(sed -n 's/^set(PACKAGE_VERSION "\([0-9.]*\)")/\1/p' ./version.txt)
+          export version=${{ steps.read_version.outputs.fullversion }}
           cd ./dotnet/scripts
           ./prepare-package-ref.sh
           cd ../LibCZI_Net.UnitTests
