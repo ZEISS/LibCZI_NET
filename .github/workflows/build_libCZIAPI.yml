@@ -305,8 +305,7 @@ jobs:
           path: ${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary
 
 
-
-  Prepare_Native_Binaries:
+  prepare-native-binaries:
     needs: [build-windows-x64, build-windows-arm64, build-linux-ubuntu22-x64, build-linux-ubuntu24-x64, build-macos-arm64]
     runs-on: windows-latest
     steps:
@@ -357,6 +356,11 @@ jobs:
           cd dotnet
           dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=${{ steps.read_version.outputs.version }}.0
 
+      - name: Test LibCZI_Net
+        run: |
+          cd dotnet
+          dotnet test --logger "console;verbosity=detailed"
+
       - name: Package Nuget
         run: |
           cd dotnet
@@ -365,7 +369,7 @@ jobs:
       - name: Upload Nuget as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Nuget
+          name: LibCZI_API.nupkg
           path: |
             ${{github.workspace}}/dotnet/LibCZI_Net/bin/Release/*.nupkg
 
@@ -380,4 +384,37 @@ jobs:
             dotnet nuget push $file.FullName `
             --api-key "${{ secrets.NUGETAPI_KEY }}" `
             --source "https://api.nuget.org/v3/index.json"
-          }
+
+  test-nuget:
+    runs-on: windows-latest
+    needs: [prepare-native-binaries]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download NuGet Package
+        uses: actions/download-artifact@v4
+        with:
+          name: LibCZI_API.nupkg
+          path: ./downloads
+
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: libCZIAPI-ubuntu24-x64-binaries
+          path: ./artifacts/
+
+      - name: Unit Tests w/ NuGet
+        shell: bash
+        run: |
+          # here we must export the version environment variable since the
+          # prepare-package-ref.sh depends on this
+          export version=${{ steps.read_version.outputs.fullversion }}
+          cd ./dotnet/scripts
+          ./prepare-package-ref.sh
+          cd ../LibCZI_Net.UnitTests
+          echo Check modified and generated files
+          ls && cat NuGet.config && cat Directory.Packages.props
+          echo Copy generated NuGet Package to local source
+          cp ../../../downloads/*.nupkg ./local_packages
+          echo Run Tests with NuGet
+          dotnet test --logger "console;verbosity=detailed"

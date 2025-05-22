@@ -21,7 +21,6 @@
                 "files": [ "images/**", "docs/assets/**" ]
             }
         ],
-        "output": "_site",
         "template": [
             "default",
             "modern",
