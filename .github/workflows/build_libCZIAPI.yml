@@ -353,12 +353,15 @@ jobs:
 
       - name: Build LibCZI_Net
         run: |
+          version=${{ steps.read_version.outputs.version }}.0
+          echo "Building for version number $version"
           cd dotnet
-          dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=${{ steps.read_version.outputs.version }}.0
+          dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=$version
 
       - name: Test LibCZI_Net
         run: |
           cd dotnet
+          echo "Testing for version number $version"
           dotnet test --logger "console;verbosity=detailed"
 
       - name: Package Nuget
