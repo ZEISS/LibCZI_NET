@@ -384,6 +384,7 @@ jobs:
             dotnet nuget push $file.FullName `
             --api-key "${{ secrets.NUGETAPI_KEY }}" `
             --source "https://api.nuget.org/v3/index.json"
+            }
 
   test-nuget:
     runs-on: windows-latest
