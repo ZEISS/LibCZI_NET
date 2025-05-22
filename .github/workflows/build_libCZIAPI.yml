@@ -309,6 +309,9 @@ jobs:
   prepare-native-binaries:
     needs: [build-windows-x64, build-windows-arm64, build-linux-ubuntu22-x64, build-linux-ubuntu24-x64, build-macos-arm64]
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.read_version.outputs.version }}
+      fullversion: ${{ steps.read_version.outputs.fullversion }}
     steps:
       - uses: actions/checkout@v4
 
@@ -410,7 +413,7 @@ jobs:
         run: |
           # here we must export the version environment variable since the
           # prepare-package-ref.sh depends on this
-          export version=${{ steps.read_version.outputs.fullversion }}
+          export version=${{ sneeds.prepare-native-binaries.outputs.fullversion }}
           cd ./dotnet/scripts
           ./prepare-package-ref.sh
           cd ../LibCZI_Net.UnitTests
