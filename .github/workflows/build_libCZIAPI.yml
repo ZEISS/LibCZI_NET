@@ -1,5 +1,6 @@
 name: Build libCZIAPI
 
+# checkov:skip=CKV_GHA_7 reason="Required to control optional deploy to NuGet
 on:
   push:
     branches: ["main"]
@@ -293,7 +294,7 @@ jobs:
             -DLIBCZI_BUILD_PREFER_EXTERNALPACKAGE_RAPIDJSON=OFF \
             -DLIBCZI_BUILD_DYNLIB=OFF \
             -DLIBCZI_BUILD_LIBCZIAPI=ON \
-            -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary" 
+            -DLIBCZI_DESTINATION_FOLDER_LIBCZIAPI="${{github.workspace}}/submodules/libCZI/libCZIAPI-Binary"
 
       - name: Build C++
         run: cmake --build ${{github.workspace}}/submodules/libCZI/build --config ${{env.BUILD_TYPE}} -j "$(nproc)"
