@@ -2,7 +2,7 @@ name: REUSE
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main, haa/open_source_guide_setup"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
