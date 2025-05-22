@@ -43,21 +43,21 @@
 
   <!-- Configuration for Nuget -->
   <PropertyGroup>
-    <PackageId>LibCZIAPI</PackageId>
+    <PackageId>LibCZI_NET</PackageId>
     <!-- You can pass this via CLI : dotnet pack -p:Version=1.2.3 -c Release -->
     <Version>$(version)</Version>
     <Authors>ZEISS</Authors>
     <Company>ZEISS</Company>
     <Title>.NET integration for LibCZIAPI</Title>
-    <Description>.NET integration for libCZIAPI - cross-Platform C++ library to read and write CZI.</Description>
+    <Description>.NET integration for libCZI - read and write CZI-documents from C#</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://PLEASE-UPDATE</PackageProjectUrl>
-    <!-- <PackageIcon>icon.png</PackageIcon> -->
+    <PackageProjectUrl>https://github.com/ZEISS/LibCZI_NET</PackageProjectUrl>
+    <PackageIcon>LibCZI_NET_Logo.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Copyright>Copyright 2023-2024 Carl Zeiss Microscopy GmbH</Copyright>
+    <Copyright>Copyright 2023-2025 Carl Zeiss Microscopy GmbH</Copyright>
     <PackageTags>CZI microscopy libCZI</PackageTags>
     <PackageReadmeFile>docs/README.md</PackageReadmeFile>
-    <RepositoryUrl>https://PLEASE-UPDATE</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ZEISS/LibCZI_NET</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>This is an early alpha version.</PackageReleaseNotes>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -68,6 +68,7 @@
   <ItemGroup>
     <!-- Content files to be included in the package -->
     <None Include="Nuget-Assets\README.md" Pack="true" PackagePath="docs\" />
+    <None Include="Nuget-Assets\LibCZI_NET_Logo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
