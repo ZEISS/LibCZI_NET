@@ -14,6 +14,7 @@ EOF
 
 # generate a Directory.Packages.props file
 echo Create a Directory.Packages.props file
+# shellcheck disable=SC2154
 cat > ../LibCZI_Net.UnitTests/Directory.Packages.props<<EOF
 <Project>
   <ItemGroup>
