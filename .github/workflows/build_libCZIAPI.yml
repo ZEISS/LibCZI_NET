@@ -431,6 +431,8 @@ jobs:
           sed -i 's|<ProjectReference Include="..\\LibCZI_Net\\LibCZI_Net.csproj" />|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
           dotnet restore
           dotnet build
+          ls -R bin\Debug\net8.0\runtimes
+          echo "**********************************************************************************"
           dotnet test --logger "console;verbosity=detailed"
           #
           ## here we must export the version environment variable since the
