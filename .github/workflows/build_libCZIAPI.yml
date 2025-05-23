@@ -412,15 +412,33 @@ jobs:
       - name: Unit Tests w/ NuGet
         shell: bash
         run: |
-          # here we must export the version environment variable since the
-          # prepare-package-ref.sh depends on this
-          export version=${{ needs.prepare-native-binaries.outputs.fullversion }}
-          cd ./dotnet/scripts
-          ./prepare-package-ref.sh
-          cd ../LibCZI_Net.UnitTests
-          echo Check modified and generated files
-          ls && cat NuGet.config && cat Directory.Packages.props
-          echo Copy generated NuGet Package to local source
-          cp ../../downloads/*.nupkg ./local_packages
-          echo Run Tests with NuGet
+          cd dotnet/LibCZI_Net.UnitTests
+          cat > ../LibCZI_Net.UnitTests/NuGet.config<< EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <packageSources>
+              <add key="Local" value=".\local_packages" />
+              <add key="Nuget.Org" value="https://api.nuget.org/v3/index.json" />
+            </packageSources>
+          </configuration>
+          EOF
+          mkdir local_packages
+          cp ../../downloads/LibCZI_API.nupkg ./local_packages
+          ls local_packages
+          sed -i 's|<ProjectReference Include="..\\LibCZI_Net\\LibCZI_Net.csproj" />|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
+          dotnet restore
+          dotnet build
           dotnet test --logger "console;verbosity=detailed"
+          #
+          ## here we must export the version environment variable since the
+          ## prepare-package-ref.sh depends on this
+          #export version=${{ needs.prepare-native-binaries.outputs.fullversion }}
+          #cd ./dotnet/scripts
+          #./prepare-package-ref.sh
+          #cd ../LibCZI_Net.UnitTests
+          #echo Check modified and generated files
+          #ls && cat NuGet.config && cat Directory.Packages.props
+          #echo Copy generated NuGet Package to local source
+          #cp ../../downloads/*.nupkg ./local_packages
+          #echo Run Tests with NuGet
+          #dotnet test --logger "console;verbosity=detailed"
