@@ -387,7 +387,8 @@ jobs:
           foreach ($file in $files) {
             dotnet nuget push $file.FullName `
             --api-key "${{ secrets.NUGETAPI_KEY }}" `
-            --source "https://api.nuget.org/v3/index.json"
+            --source "https://api.nuget.org/v3/index.json" `
+            --skip-duplicate
             }
 
   test-nuget:
