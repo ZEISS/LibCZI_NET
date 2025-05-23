@@ -421,6 +421,6 @@ jobs:
           echo Check modified and generated files
           ls && cat NuGet.config && cat Directory.Packages.props
           echo Copy generated NuGet Package to local source
-          cp ../../../downloads/*.nupkg ./local_packages
+          cp ../../downloads/*.nupkg ./local_packages
           echo Run Tests with NuGet
           dotnet test --logger "console;verbosity=detailed"
