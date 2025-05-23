@@ -8,6 +8,10 @@
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!--RUNTIME_IDENTIFIER-->
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AwesomeAssertions" Version="8.0.2" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
