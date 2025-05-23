@@ -423,7 +423,10 @@ jobs:
           </configuration>
           EOF
           mkdir local_packages
-          cp ../../downloads/LibCZI_API.nupkg ./local_packages
+          echo "ls ../../downloads/"
+          ls ../../downloads/
+          echo "**********************************************************************************"
+          cp ../../downloads/*.nupkg ./local_packages
           ls local_packages
           sed -i 's|<ProjectReference Include="..\\LibCZI_Net\\LibCZI_Net.csproj" />|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
           dotnet restore
