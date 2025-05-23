@@ -17,7 +17,7 @@ echo Create a Directory.Packages.props file
 cat > ../LibCZI_Net.UnitTests/Directory.Packages.props<<EOF
 <Project>
   <ItemGroup>
-    <PackageVersion Include="LibCZI_Net" Version="0.0.21-alpha" />
+    <PackageVersion Include="LibCZI_NET" Version="0.0.21-alpha" />
   </ItemGroup>
 </Project>
 EOF
