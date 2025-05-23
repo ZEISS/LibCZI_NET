@@ -6,7 +6,7 @@
 
 ## What
 
-LibCZI_Net is .NET-library, providing .NET-bindings for [libCZI](https://github.com/ZEISS/libczi).  
+LibCZI_NET is .NET-library, providing .NET-bindings for [libCZI](https://github.com/ZEISS/libczi).  
 It aims to give a rich and easy-to-use API for reading and writing [CZI files](https://www.zeiss.com/microscopy/en/products/software/zeiss-zen/czi-image-file-format.html) files in .NET applications.
 
 ## Why
