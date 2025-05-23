@@ -432,7 +432,7 @@ jobs:
           dotnet restore
           dotnet build
           echo "ls -R bin/Debug/net8.0/runtimes"
-          ls -R bin/Debug/net8.0/runtimes
+          ls -R bin/Debug/net8.0/
           echo "**********************************************************************************"
           dotnet test --logger "console;verbosity=detailed"
           #
