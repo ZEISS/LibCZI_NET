@@ -1,0 +1,12 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="ForceCopyAllNativeLibs" AfterTargets="Build">
+    <ItemGroup>
+      <_AllNativeLibs Include="$(MSBuildThisFileDirectory)..\runtimes\**\native\*.*" />
+    </ItemGroup>
+    <Copy
+      SourceFiles="@(_AllNativeLibs)"
+      DestinationFolder="$(OutDir)"
+      SkipUnchangedFiles="true"
+      Condition="Exists('%(Identity)')" />
+  </Target>
+</Project>

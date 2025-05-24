@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -69,6 +69,11 @@
     <!-- Content files to be included in the package -->
     <None Include="Nuget-Assets\README.md" Pack="true" PackagePath="docs\" />
     <None Include="Nuget-Assets\LibCZI_NET_Logo.png" Pack="true" PackagePath="" />
+    <None Include="buildTransitive\LibCZI_NET.targets" Pack="true" PackagePath="buildTransitive\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="buildTransitive\" />
   </ItemGroup>
 
 </Project>
