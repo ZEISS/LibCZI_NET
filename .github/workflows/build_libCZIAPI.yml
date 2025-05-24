@@ -422,7 +422,7 @@ jobs:
           echo "**********************************************************************************"
           cp ../../downloads/*.nupkg ./local_packages
           ls local_packages
-          sed -i 's|<ProjectReference Include="..\\LibCZI_Net\\LibCZI_Net.csproj" />|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
+          sed -i 's|<ProjectReference Include="../LibCZI_Net/LibCZI_Net.csproj" />|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
           sed -i 's|<!--RUNTIME_IDENTIFIER-->|<RuntimeIdentifier>win-x64</RuntimeIdentifier>|' ./LibCZI_Net.UnitTests.csproj
           echo "**********************************************************************************"
           cat LibCZI_Net.UnitTests.csproj
