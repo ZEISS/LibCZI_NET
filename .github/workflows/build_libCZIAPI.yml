@@ -403,12 +403,6 @@ jobs:
           name: LibCZI_API.nupkg
           path: ./downloads
 
-      - name: Download Linux Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: libCZIAPI-ubuntu24-x64-binaries
-          path: ./artifacts/
-
       - name: Unit Tests w/ NuGet
         shell: bash
         run: |
@@ -430,6 +424,9 @@ jobs:
           ls local_packages
           sed -i 's|<ProjectReference Include="..\\LibCZI_Net\\LibCZI_Net.csproj" />|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
           sed -i 's|<!--RUNTIME_IDENTIFIER-->|<RuntimeIdentifier>win-x64</RuntimeIdentifier>|' ./LibCZI_Net.UnitTests.csproj
+          echo "**********************************************************************************"
+          cat LibCZI_Net.UnitTests.csproj
+          echo "**********************************************************************************"
           dotnet restore
           dotnet build
           echo "ls -R bin/Debug/net8.0/runtimes"
