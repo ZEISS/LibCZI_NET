@@ -406,6 +406,10 @@ jobs:
       - name: Unit Tests w/ NuGet
         shell: bash
         run: |
+          # We want to run the unit-test using the NuGet package we just built. For this, we do the following:
+          # 1. Create a local NuGet source in the LibCZI_Net.UnitTests project directory.
+          # 2. Copy the NuGet package to the local source directory.
+          # 3. Modify the LibCZI_Net.UnitTests.csproj to use the local NuGet source and reference the package.
           cd dotnet/LibCZI_Net.UnitTests
           cat > ../LibCZI_Net.UnitTests/NuGet.config<< EOF
           <?xml version="1.0" encoding="utf-8"?>
@@ -417,32 +421,7 @@ jobs:
           </configuration>
           EOF
           mkdir local_packages
-          echo "ls ../../downloads/"
-          ls ../../downloads/
-          echo "**********************************************************************************"
           cp ../../downloads/*.nupkg ./local_packages
-          ls local_packages
+          # replace the ProjectReference with a PackageReference to the NuGet package
           sed -i 's|<ProjectReference\s*Include=\s*"..[./\\]LibCZI_Net[./\\]LibCZI_Net.csproj"\s*/>|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
-          #sed -i 's|<!--RUNTIME_IDENTIFIER-->|<RuntimeIdentifier>win-x64</RuntimeIdentifier>|' ./LibCZI_Net.UnitTests.csproj
-          echo "**********************************************************************************"
-          cat LibCZI_Net.UnitTests.csproj
-          echo "**********************************************************************************"
-          dotnet restore
-          dotnet build
-          echo "ls -R bin/Debug/net8.0/runtimes"
-          ls -R bin/Debug/net8.0/
-          echo "**********************************************************************************"
           dotnet test --logger "console;verbosity=detailed"
-          #
-          ## here we must export the version environment variable since the
-          ## prepare-package-ref.sh depends on this
-          #export version=${{ needs.prepare-native-binaries.outputs.fullversion }}
-          #cd ./dotnet/scripts
-          #./prepare-package-ref.sh
-          #cd ../LibCZI_Net.UnitTests
-          #echo Check modified and generated files
-          #ls && cat NuGet.config && cat Directory.Packages.props
-          #echo Copy generated NuGet Package to local source
-          #cp ../../downloads/*.nupkg ./local_packages
-          #echo Run Tests with NuGet
-          #dotnet test --logger "console;verbosity=detailed"
