@@ -1,6 +1,7 @@
 # STOP - Read this First!
 Reporting a security vulnerability?  
-Check out the project's [security policy](https://github.com/zeiss/libczi/security/policy).
+// TODO Ask Juergen about security policy.
+Check out the project's [security policy](https://github.com/zeiss/LibCZI_NET/security/policy).
 
 # Fill out and Adjust this Template
 
@@ -26,11 +27,12 @@ Provide instructions to reproduce.
 
 ## Checklist:
 
+// TODO Ask Juergen about Contributing Guidelines
 - [ ] I followed the Contributing Guidelines.
 - [ ] I did a self-review.
 - [ ] I commented my code, particularly in hard-to-understand areas.
 - [ ] I updated the documentation.
-- [ ] I updated the version of libCZI following [Versioning of libCZI](https://zeiss.github.io/LibCZI_NET/index.html#autotoc_md0) depending on the [type of change](#type-of-change)
+- [ ] I updated the version of LibCZI_NET following [Versioning of LibCZI_NET](https://turbo-fiesta-krrk8qj.pages.github.io/LibCZI_Net/docs/building.html) depending on the [type of change](#type-of-change)
   - Bug fix -> PATCH
   - New feature -> MINOR
   - Breaking change -> MAJOR
