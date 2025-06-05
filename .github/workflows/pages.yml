@@ -45,7 +45,7 @@ jobs:
           mkdir ${{github.workspace}}/documentation/LibCZI_Net
           cp -r ${{github.workspace}}/dotnet/docfx/* ${{github.workspace}}/documentation/LibCZI_Net
           # add a "top-level-HTML-file" redirecting to the actual documentation
-          echo "<meta http-equiv=\"Refresh\" content=\"0; url='LibCZI_Net/_site'\" />" >> ${{github.workspace}}/documentation/index.html
+          echo "<meta http-equiv=\"Refresh\" content=\"0; url='LibCZI_Net/'\" />" >> ${{github.workspace}}/documentation/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
