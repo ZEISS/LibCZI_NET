@@ -1,6 +1,5 @@
 # STOP - Read this First!
 Reporting a security vulnerability?  
-// TODO Ask Juergen about security policy.
 Check out the project's [security policy](https://github.com/zeiss/LibCZI_NET/security/policy).
 
 # Fill out and Adjust this Template
@@ -27,7 +26,6 @@ Provide instructions to reproduce.
 
 ## Checklist:
 
-// TODO Ask Juergen about Contributing Guidelines
 - [ ] I followed the Contributing Guidelines.
 - [ ] I did a self-review.
 - [ ] I commented my code, particularly in hard-to-understand areas.
