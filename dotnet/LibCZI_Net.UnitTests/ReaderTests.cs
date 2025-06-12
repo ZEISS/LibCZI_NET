@@ -34,6 +34,33 @@ namespace LibCZI_Net.UnitTests
         }
 
         [Fact]
+        public void ConstructExternalInputStreamAndTryGetSubBlockInfoForIndex()
+        {
+            using var inputStream =
+                Factory.CreateInputStreamFromExternalStream(new InputStreamObject(new MemoryStream(Data.GetTestCzi()),
+                    true));
+
+            using var reader = Factory.CreateReader();
+            reader.Open(inputStream);
+
+            SubBlockInfo subBlockInfo;
+            bool isSuccess = reader.TryGetSubBlockInfoForIndex(0, out subBlockInfo);
+
+            Assert.Equal(0, subBlockInfo.CompressionModeRaw);
+
+            Assert.Equal(0, subBlockInfo.LogicalRect.X);
+            Assert.Equal(0, subBlockInfo.LogicalRect.Y);
+            Assert.Equal(1, subBlockInfo.LogicalRect.Width);
+            Assert.Equal(1, subBlockInfo.LogicalRect.Height);
+
+            Assert.Equal(1, subBlockInfo.PhysicalSize.Width);
+            Assert.Equal(1, subBlockInfo.PhysicalSize.Height);
+
+            Assert.Equal(0, subBlockInfo.Mindex);
+            Assert.Equal(0, (float)subBlockInfo.PixelType);
+        }
+
+        [Fact]
         public void ConstructExternalInputStreamWith4TilesCziAndTestBitmapOperation()
         {
             using var inputStream =

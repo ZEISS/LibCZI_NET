@@ -85,6 +85,12 @@ namespace LibCZI_Net.Implementation
         }
 
         /// <inheritdoc/>
+        public bool TryGetSubBlockInfoForIndex(int index, out SubBlockInfo subBlockInfo)
+        {
+            return LibCziApiInterop.Instance.ReaderTryGetSubBlockInfoForIndex(this.handle, index, out subBlockInfo);
+        }
+
+        /// <inheritdoc/>
         public IMetadataSegment GetMetadataSegment()
         {
             IntPtr metadataSegmentHandle = LibCziApiInterop.Instance.ReaderGetMetadataSegment(this.handle);
