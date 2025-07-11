@@ -60,6 +60,7 @@ namespace LibCZI_Net.Interface
         /// <summary>
         /// Gets the compression mode identification of the sub-block as enum.
         /// </summary>
+        /// <value> The compression mode identification of the sub-block as enum.</value>
         public CompressionMode CompressionMode
         {
             get

@@ -13,7 +13,7 @@ namespace LibCZI_Net.Interface
     public static class Utilities
     {
         /// <summary>
-        /// Converts Dimensions (Enum) to <c>char</c>>.
+        /// Converts Dimensions (Enum) to <c>char</c>.
         /// </summary>
         /// <param name="dimensionIndex">Index of the dimension <see cref="DimensionIndex"/>.</param>
         /// <returns>

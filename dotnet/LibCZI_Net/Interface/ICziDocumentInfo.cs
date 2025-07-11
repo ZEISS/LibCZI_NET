@@ -43,25 +43,25 @@ namespace LibCZI_Net.Interface
     /// </summary>
     public static class CziDocumentPropertyKeys
     {
-        /// <summary> Key identifying the document's name. Datatype: string.</summary>
+        /// <value> Key identifying the document's name. Datatype: string.</value>
         public const string GeneralDocumentInfoName = "name";
 
-        /// <summary> Key identifying the document's title. Datatype: string.</summary>
+        /// <value> Key identifying the document's title. Datatype: string.</value>
         public const string GeneralDocumentInfoTitle = "title";
 
-        /// <summary> Key identifying the name of the author. Datatype: string.</summary>
+        /// <value> Key identifying the name of the author. Datatype: string.</value>
         public const string GeneralDocumentInfoUserName = "user_name";
 
-        /// <summary> Key identifying the description of the document. Datatype: string.</summary>
+        /// <value> Key identifying the description of the document. Datatype: string.</value>
         public const string GeneralDocumentInfoDescription = "description";
 
-        /// <summary> Key identifying the comment field of the document. Datatype: string.</summary>
+        /// <value> Key identifying the comment field of the document. Datatype: string.</value>
         public const string GeneralDocumentInfoComment = "comment";
 
-        /// <summary> Key identifying the keywords field of the document. Datatype: string.</summary>
+        /// <value> Key identifying the keywords field of the document. Datatype: string.</value>
         public const string GeneralDocumentInfoKeywords = "keywords";
 
-        /// <summary> Key identifying the creation time of the document. Datatype: DateTime.</summary>
+        /// <value> Key identifying the creation time of the document. Datatype: DateTime.</value>
         public const string GeneralDocumentInfoCreationDateTime = "creation_date_time";
     }
 }

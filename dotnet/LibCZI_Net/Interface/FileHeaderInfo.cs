@@ -28,9 +28,10 @@ namespace LibCZI_Net.Interface
             this.minorVersion = minorVersion;
         }
 
-        /// <summary>
-        /// Gets the Guid of the file-header.
-        /// </summary>
+        /// <summary> Gets the Guid of the file-header.</summary>
+        /// <value>
+        /// The Guid of the file-header.
+        /// </value>
         public Guid Guid => this.guid;
 
         /// <summary> Gets the major version.</summary>

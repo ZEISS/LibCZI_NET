@@ -7,10 +7,10 @@ namespace LibCZI_Net.Interface
     /// <summary> This structure is representing an 8-bit R-G-B color.</summary>
     public struct Rgb24Color
     {
-        /// <summary> The black color value.</summary>
+        /// <value> The black color value.</value>
         public static Rgb24Color Black = new Rgb24Color(0, 0, 0);
 
-        /// <summary> The white color value.</summary>
+        /// <value> The white color value.</value>
         public static Rgb24Color White = new Rgb24Color(255, 255, 255);
 
         /// <summary>Initializes a new instance of the <see cref="Rgb24Color" /> struct.</summary>
