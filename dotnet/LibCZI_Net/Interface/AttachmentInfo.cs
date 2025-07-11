@@ -28,19 +28,22 @@ namespace LibCZI_Net.Interface
             this.name = name;
         }
 
-        /// <value>
+        /// <summary>
         /// Gets the Guid of the attachment.
-        /// </value>
+        /// </summary>
+        /// <value> The Guid of the attachment.</value>
         public Guid Guid => this.guid;
 
-        /// <value>
+        /// <summary>
         /// Gets the content file type of the attachment.
-        /// </value>
+        /// </summary>
+        /// <value>  The content file type.</value>
         public string ContentFileType => this.contentFileType;
 
-        /// <value>
+        /// <summary>
         /// Gets the name of the attachment.
-        /// </value>
+        /// </summary>
+        /// <value> The name of the attachment.</value>
         public string Name => this.name;
     }
 }

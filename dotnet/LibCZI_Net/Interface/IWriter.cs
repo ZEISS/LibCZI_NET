@@ -69,44 +69,56 @@ namespace LibCZI_Net.Interface
     /// </summary>
     public struct AddSubBlockInfo
     {
-        /// <value> The sub block's coordinate.</value>
+        /// <summary> The sub block's coordinate.</summary>
+        /// <value> The ICoordinate representing the position of the sub block.</value>
         public ICoordinate Coordinate;
 
-        /// <value> Boolean flag indicating whether the field 'Mindex' is valid.</value>
+        /// <summary> Boolean flag indicating whether the field 'Mindex' is valid.</summary>
+        /// <value> The Boolean flag that holds whether the field 'Mindex' is valid.</value>
         public bool MindexValid;
 
-        /// <value> The M-index of the sub block.</value>
+        /// <summary> The M-index of the sub block.</summary>
+        /// <value> The M-index.</value>
         public int Mindex;
 
-        /// <value> The x-coordinate of the sub block.</value>
+        /// <summary> The x-coordinate of the sub block.</summary>
+        /// <value> The x-coordinate.</value>
         public int X;
 
-        /// <value> The y-coordinate of the sub block.</value>
+        /// <summary> The y-coordinate of the sub block.</summary>
+        /// <value> The y-coordinate.</value>
         public int Y;
 
-        /// <value> The logical with of the sub block (in pixels).</value>
+        /// <summary> The logical width of the sub block (in pixels).</summary>
+        /// <value> The logical width.</value>
         public int LogicalWidth;
 
-        /// <value> The logical with of the sub block (in pixels).</value>
+        /// <summary> The logical height of the sub block (in pixels).</summary>
+        /// <value> The logical height.</value>
         public int LogicalHeight;
 
-        /// <value> The physical with of the sub block (in pixels).</value>
+        /// <summary> The physical width of the sub block (in pixels).</summary>
+        /// <value> The physical width.</value>
         public int PhysicalWidth;
 
-        /// <value> The physical height of the sub block (in pixels).</value>
+        /// <summary> The physical height of the sub block (in pixels).</summary>
+        /// <value> The physical height.</value>
         public int PhysicalHeight;
 
-        /// <value> The pixel type of the sub block.</value>
+        /// <summary> The pixel type of the sub block.</summary>
+        /// <value> The pixel type.</value>
         public PixelType PixelType;
     }
 
     /// <summary> This structure gathers all information required for adding an uncompressed sub block.</summary>
     public struct AddSubBlockInfoUncompressed
     {
-        /// <value> Information describing the sub block.</value>
+        /// <summary> Information describing the sub block.</summary>
+        /// <value> Sub block information.</value>
         public AddSubBlockInfo AddSubBlockInfo;
 
-        /// <value> The stride of the bitmap being added.</value>
+        /// <summary> The stride of the bitmap being added.</summary>
+        /// <value>  The stride.</value>
         public uint Stride;
     }
 
@@ -115,9 +127,11 @@ namespace LibCZI_Net.Interface
     /// </summary>
     public struct AddSubBlockInfoCompressed
     {
+        /// <summary> Sub block information.</summary>
         /// <value> Information describing the sub block.</value>
         public AddSubBlockInfo AddSubBlockInfo;
 
+        /// <summary> Compression mode of sub block.</summary>
         /// <value> The compression mode.</value>
         public int CompressionMode;
     }
@@ -129,12 +143,15 @@ namespace LibCZI_Net.Interface
     /// </summary>
     public ref struct AddSubBlockData
     {
+        /// <summary> Bitmap data of sub block data.</summary>
         /// <value> The bitmap data.</value>
         public Span<byte> BitmapData;
 
+        /// <summary> Metadata of sub block data.</summary>
         /// <value> The metadata.</value>
         public Span<byte> Metadata;
 
+        /// <summary> Attachment of sub block data.</summary>
         /// <value> The attachment.</value>
         public Span<byte> Attachment;
     }
@@ -144,28 +161,32 @@ namespace LibCZI_Net.Interface
     /// </summary>
     public struct AddAttachmentInfo
     {
-        /// <value> Unique identifier for the content.</value>
+        /// <summary> Unique identifier for the content.</summary>
+        /// <value> The unique identifier for the content.</value>
         public Guid Guid;
 
-        /// <value>
+        /// <summary>
         /// The content file type. The max length of this string is 8 characters,
         /// larger strings will be truncated.
-        /// </value>
+        /// </summary>
+        /// <value> The content file type.</value>
         public string ContentFileType;
 
-        /// <value>
+        /// <summary>
         /// The attachment's name. The max length of this string is 80 characters.
-        /// </value>
+        /// </summary>
+        /// <value> The attachment's name.</value>
         public string Name;
     }
 
     /// <summary> The keys for use with the property bag used with IWriter.Open are found here.</summary>
     public static class WriterOpenParameters
     {
-        /// <value>
+        /// <summary>
         /// Specify the file-GUID of the CZI-document being created. If this is GUID_NULL or not given, a new GUID will be generated.
         /// Type: Guid or string.
-        /// </value>
+        /// </summary>
+        /// <value> The file-GUID of the CZI-document being created.</value>
         public const string FileGuid = "file_guid";
     }
 }
