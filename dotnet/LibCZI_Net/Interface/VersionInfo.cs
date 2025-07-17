@@ -49,6 +49,7 @@ namespace LibCZI_Net.Interface
         public int Tweak { get; }
 
         /// <inheritdoc/>
+        /// <value> Returns a string that represents the current object.</value>
         public override string ToString()
         {
             return $"v{this.Major}.{this.Minor}.{this.Patch}.{this.Tweak}";

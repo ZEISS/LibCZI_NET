@@ -16,7 +16,9 @@ namespace LibCZI_Net.Interface
         /// Initializes a new instance of the <see cref="BitmapLockInfo"/> struct.
         /// </summary>
         /// <param name="pointerBitmap">Pointer to the locked bitmap.</param>
-        /// <param name="stride">TODO: Ask Juergen.</param>
+        /// <param name="stride">The total number of bytes between the start of one row of the bitmap and the start of the next row.
+        /// This includes both actual pixel data and any padding added to align rows.
+        /// </param>
         public BitmapLockInfo(IntPtr pointerBitmap, int stride)
         {
             this.BitmapData = pointerBitmap;

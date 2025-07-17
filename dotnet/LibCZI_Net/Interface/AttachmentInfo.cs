@@ -31,16 +31,19 @@ namespace LibCZI_Net.Interface
         /// <summary>
         /// Gets the Guid of the attachment.
         /// </summary>
+        /// <value> The Guid of the attachment.</value>
         public Guid Guid => this.guid;
 
         /// <summary>
         /// Gets the content file type of the attachment.
         /// </summary>
+        /// <value>  The content file type.</value>
         public string ContentFileType => this.contentFileType;
 
         /// <summary>
         /// Gets the name of the attachment.
         /// </summary>
+        /// <value> The name of the attachment.</value>
         public string Name => this.name;
     }
 }

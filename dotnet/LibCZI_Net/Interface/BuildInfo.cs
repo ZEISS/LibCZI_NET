@@ -42,6 +42,7 @@ namespace LibCZI_Net.Interface
         public string RepositoryTag { get; }
 
         /// <inheritdoc/>
+        /// <value> Returns a string that represents the current object.</value>
         public override string ToString()
         {
             return $"CompilerIdentification: {this.CompilerIdentification} " +

@@ -24,7 +24,7 @@ Before reading any operation can occur, the Reader.Open(IInputStream) method mus
 ```
 Note: You have to call reader.Open() before performing any read operations.
 
-With the Open-method, the caller has to pass in an object which implements the interface “IStream”. This object is used by the CZIReader in order to access the data in a CZI-file. With below methods can create input streams:
+With the Open-method, the caller has to pass in an object which implements the interface "IStream". This object is used by the CZIReader in order to access the data in a CZI-file. With below methods can create input streams:
 
 #### Open File using In-Memory Stream
 When the CZI file is already loaded in memory (e.g., from a bye array), it can be wrapped in an external input stream.
