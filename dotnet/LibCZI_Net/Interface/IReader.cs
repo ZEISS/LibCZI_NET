@@ -43,6 +43,14 @@ namespace LibCZI_Net.Interface
         /// <returns>An instance of <see cref="ISubBlock"/> that represents the specified sub-block.</returns>
         ISubBlock ReadSubBlock(int index);
 
+        /// <summary>
+        /// Attempts to get the sub-block information for the specified index.
+        /// </summary>
+        /// <param name="index">      The index of the attachment.</param>
+        /// <param name="subBlockInfo"> [out] The requested information about the sub-block.</param>
+        /// <returns> True if it succeeds, false if it fails.</returns>
+        bool TryGetSubBlockInfoForIndex(int index, out SubBlockInfo subBlockInfo);
+
         /// <summary> Reads the metadata segment from the stream.</summary>
         /// <returns> The metadata segment object.</returns>
         IMetadataSegment GetMetadataSegment();

@@ -121,6 +121,7 @@ namespace LibCZI_Net.Interop
                 this.getStreamClassInfo = NativeLibraryUtils.GetProcAddressThrowIfNotFound<GetStreamClassInfoDelegate>(dllHandle, "libCZI_GetStreamClassInfo");
 
                 this.readerReadSubBlock = NativeLibraryUtils.GetProcAddressThrowIfNotFound<ReaderReadSubBlockDelegate>(dllHandle, "libCZI_ReaderReadSubBlock");
+                this.readerTryGetSubBlockInfoForIndex = NativeLibraryUtils.GetProcAddressThrowIfNotFound<ReaderTryGetSubBlockInfoForIndexDelegate>(dllHandle, "libCZI_TryGetSubBlockInfoForIndex");
                 this.readerGetMetadataSegment = NativeLibraryUtils.GetProcAddressThrowIfNotFound<ReaderGetMetadataSegmentDelegate>(dllHandle, "libCZI_ReaderGetMetadataSegment");
                 this.readerGetAttachmentCount = NativeLibraryUtils.GetProcAddressThrowIfNotFound<ReaderGetAttachmentCountDelegate>(dllHandle, "libCZI_ReaderGetAttachmentCount");
                 this.readerGetAttachmentFromDirectoryInfo = NativeLibraryUtils.GetProcAddressThrowIfNotFound<ReaderGetAttachmentInfoFromDirectoryDelegate>(dllHandle, "libCZI_ReaderGetAttachmentInfoFromDirectory");
@@ -741,6 +742,33 @@ namespace LibCZI_Net.Interop
             }
 
             return subBlockHandle;
+        }
+
+        /// <summary>
+        /// Tries to get information about the sub-block with the specified index.
+        /// </summary>
+        /// <param name="readerHandle">The reader handle.</param>
+        /// <param name="index">The index.</param>
+        /// <param name="subBlockInfo"> [out] Information describing the sub-block.</param>
+        /// <returns> True if it succeeds, false if it fails. </returns>
+        public bool ReaderTryGetSubBlockInfoForIndex(IntPtr readerHandle, int index, out SubBlockInfo subBlockInfo)
+        {
+            this.ThrowIfNotInitialized();
+            unsafe
+            {
+                SubBlockInfoInterop subBlockInfoInterop = default(SubBlockInfoInterop);
+                int returnCode = this.readerTryGetSubBlockInfoForIndex(readerHandle, index, &subBlockInfoInterop);
+                if (returnCode == LibCziIndexOutOfRange)
+                {
+                    subBlockInfo = default;
+                    return false;
+                }
+
+                this.ThrowIfError(returnCode);
+                subBlockInfo = ToSubBlockInfo(in subBlockInfoInterop);
+
+                return true;
+            }
         }
 
         /// <summary>
@@ -1828,6 +1856,7 @@ namespace LibCZI_Net.Interop
         private readonly ReaderGetStatisticsExDelegate readerGetStatisticsEx;
         private readonly ReaderGetPyramidStatisticsDelegate readerGetPyramidStatistics;
         private readonly ReaderReadSubBlockDelegate readerReadSubBlock;
+        private readonly ReaderTryGetSubBlockInfoForIndexDelegate readerTryGetSubBlockInfoForIndex;
         private readonly ReaderGetAttachmentCountDelegate readerGetAttachmentCount;
         private readonly ReaderGetAttachmentInfoFromDirectoryDelegate readerGetAttachmentFromDirectoryInfo;
         private readonly ReaderReaderReadAttachmentDelegate readerReadAttachment;
@@ -1936,6 +1965,9 @@ namespace LibCZI_Net.Interop
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private unsafe delegate int ReaderReadSubBlockDelegate(IntPtr readerObjectHandle, int index, IntPtr* subBlockObjectHandle);
+
+        [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+        private unsafe delegate int ReaderTryGetSubBlockInfoForIndexDelegate(IntPtr readerObjectHandle, int index, SubBlockInfoInterop* subBlocksInfoInterop);
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private unsafe delegate int CreateInputStreamFromFileWideDelegate(IntPtr filenameWide, IntPtr* streamObjectHandle);
@@ -2604,6 +2636,27 @@ namespace LibCZI_Net.Interop
             }
 
             return new AttachmentInfo(guid, contentFileType, name);
+        }
+
+        private static SubBlockInfo ToSubBlockInfo(in SubBlockInfoInterop subBlockInfoInterop)
+        {
+            int compressionModeRaw;
+            PixelType pixelType;
+            Coordinate coordinate;
+            IntRect logicalRect;
+            IntSize physicalSize;
+            int mIndex;
+            unsafe
+            {
+                compressionModeRaw = subBlockInfoInterop.compression_mode_raw;
+                pixelType = (PixelType)subBlockInfoInterop.pixel_type;
+                coordinate = CoordinateInteropToCoordinate(in subBlockInfoInterop.coordinate);
+                logicalRect = new IntRect(subBlockInfoInterop.logical_rect.x, subBlockInfoInterop.logical_rect.y, subBlockInfoInterop.logical_rect.w, subBlockInfoInterop.logical_rect.h);
+                physicalSize = new IntSize(subBlockInfoInterop.physical_size.w, subBlockInfoInterop.physical_size.h);
+                mIndex = subBlockInfoInterop.m_index;
+            }
+
+            return new SubBlockInfo(compressionModeRaw, pixelType, coordinate, logicalRect, physicalSize, mIndex);
         }
 
         private static FileHeaderInfo ToFileHeaderInfo(in FileHeaderInfoInterop fileHeaderInfoInterop)
