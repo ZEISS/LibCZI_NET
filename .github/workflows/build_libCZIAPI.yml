@@ -277,7 +277,7 @@ jobs:
       - name: Install dependencies
         shell: bash
         run: |
-           vcpkg/vcpkg/vcpkg install azure-storage-blobs-cpp azure-identity-cpp 'curl[sectransp]'
+           vcpkg/vcpkg/vcpkg install azure-storage-blobs-cpp azure-identity-cpp 'curl[ssl]'
 
       - name: Configure CMake
         run: |
