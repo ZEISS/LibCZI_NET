@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>libCZI_Net.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="runtimes/**/*.*" Pack="true" PackagePath="runtimes/" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	  <None Remove="stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<AdditionalFiles Include="stylecop.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+  	<PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+  	  <PrivateAssets>all</PrivateAssets>
+  	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+  	</PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Zeiss.Micro.LibCzi.Net.UnitTests" />
+  </ItemGroup>
+
+  <!-- Configuration for Nuget -->
+  <PropertyGroup>
+    <PackageId>Zeiss.Micro.LibCzi.Net</PackageId>
+    <Authors>ZEISS</Authors>
+    <Owners>ZEISS</Owners>
+    <Title>.NET integration for LibCZIAPI</Title>
+    <Description>.NET integration for libCZI - read and write CZI-documents from C#</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/ZEISS/LibCZI_NET</PackageProjectUrl>
+    <PackageIcon>LibCZI_NET_Logo.png</PackageIcon>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright 2023-2025 Carl Zeiss Microscopy GmbH</Copyright>
+    <PackageTags>ZEISS;CZI;microscopy;libCZI</PackageTags>
+    <PackageReadmeFile>docs/README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ZEISS/LibCZI_NET</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>This is an early alpha version.</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <IncludeSymbols>false</IncludeSymbols>
+    <IncludeSource>false</IncludeSource>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Content files to be included in the package -->
+    <None Include="$(MSBuildThisFileDirectory)\Nuget-Assets\README.md" Pack="true" PackagePath="docs\" />
+    <None Include="$(MSBuildThisFileDirectory)\Nuget-Assets\LibCZI_NET_Logo.png" Pack="true" PackagePath="" />
+    <None Include="$(OutDir)\runtimes\**\*.*" Pack="true" PackagePath="runtimes\" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="$(MSBuildThisFileDirectory)\Nuget-Assets\NetNuGet.targets" Pack="true" PackagePath="build\$(PackageId).targets" />
+  </ItemGroup>
+
+</Project>
