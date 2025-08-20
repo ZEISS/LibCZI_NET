@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)..\runtimes\**\*.dll">
+      <Link>runtimes\%(RecursiveDir)%(FileName)%(Extension)</Link>
+      <PublishState>Included</PublishState>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>false</Pack>
+      <Visible>False</Visible>
+      <IncludeInVsix>true</IncludeInVsix>
+    </Content>
+  </ItemGroup>
+</Project>

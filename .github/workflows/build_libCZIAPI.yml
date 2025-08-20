@@ -325,22 +325,22 @@ jobs:
           cd binaries
           Get-ChildItem | Format-Table
           $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-windows-x64-binaries\libCZIAPI.dll"
-          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\win-x64\native"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\Zeiss.Micro.LibCzi.Net\runtimes\win-x64\native"
           New-Item -ItemType Directory -Force -Path $destDir
           Copy-Item -Path $source -Destination (Join-Path $destDir "libCZIAPI.dll")
 
           $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-windows-arm64-binaries\libCZIAPI.dll"
-          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\win-arm64\native"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\Zeiss.Micro.LibCzi.Net\runtimes\win-arm64\native"
           New-Item -ItemType Directory -Force -Path $destDir
           Copy-Item -Path $source -Destination (Join-Path $destDir "libCZIAPI.dll")
 
           $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-ubuntu22-x64-binaries\liblibCZIAPI.so"
-          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\linux-x64\native"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\Zeiss.Micro.LibCzi.Net\runtimes\linux-x64\native"
           New-Item -ItemType Directory -Force -Path $destDir
           Copy-Item -Path $source -Destination (Join-Path $destDir "liblibCZIAPI.so")
 
           $source = "$env:GITHUB_WORKSPACE\binaries\libCZIAPI-macos-applesilicon-binaries\liblibCZIAPI.dylib"
-          $destDir = "$env:GITHUB_WORKSPACE\dotnet\LibCZI_Net\runtimes\osx-arm64\native"
+          $destDir = "$env:GITHUB_WORKSPACE\dotnet\Zeiss.Micro.LibCzi.Net\runtimes\osx-arm64\native"
           New-Item -ItemType Directory -Force -Path $destDir
           Copy-Item -Path $source -Destination (Join-Path $destDir "liblibCZIAPI.dylib")
 
@@ -355,12 +355,12 @@ jobs:
           echo "version=$version" >> $env:GITHUB_OUTPUT
           echo "fullversion=$fullversion" >> $env:GITHUB_OUTPUT
 
-      - name: Build LibCZI_Net
+      - name: Build Zeiss.Micro.LibCzi.Net
         run: |
           cd dotnet
           dotnet build --configuration "${{env.BUILD_TYPE}}" -p:Version=${{ steps.read_version.outputs.version }}.0
 
-      - name: Test LibCZI_Net
+      - name: Test Zeiss.Micro.LibCzi.Net
         run: |
           cd dotnet
           dotnet test --logger "console;verbosity=detailed"
@@ -373,17 +373,17 @@ jobs:
       - name: Upload Nuget as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: LibCZI_API.nupkg
+          name: Zeiss.Micro.LibCzi.Net.nupkg
           path: |
-            ${{github.workspace}}/dotnet/LibCZI_Net/bin/Release/*.nupkg
+            ${{github.workspace}}/dotnet/Zeiss.Micro.LibCzi.Net/bin/Release/*.nupkg
 
       - name: Upload Nuget to nuget.org
         # run this step only if the main branch is pushed to or if the workflow is manually triggered and configured to deploy
         if: github.ref == 'refs/heads/main' || github.event.inputs.pushtonuget == 'true'
         run: |
-          cd "${{ github.workspace }}/dotnet/LibCZI_Net/bin/Release/"
+          cd "${{ github.workspace }}/dotnet/Zeiss.Micro.LibCzi.Net/bin/Release/"
           Get-ChildItem | Format-Table
-          $files = Get-ChildItem "${{ github.workspace }}/dotnet/LibCZI_Net/bin/Release/" -Filter *.nupkg
+          $files = Get-ChildItem "${{ github.workspace }}/dotnet/Zeiss.Micro.LibCzi.Net/bin/Release/" -Filter *.nupkg
           foreach ($file in $files) {
             dotnet nuget push $file.FullName `
             --api-key "${{ secrets.NUGETAPI_KEY }}" `
@@ -400,18 +400,18 @@ jobs:
       - name: Download NuGet Package
         uses: actions/download-artifact@v4
         with:
-          name: LibCZI_API.nupkg
+          name: Zeiss.Micro.LibCzi.Net.nupkg
           path: ./downloads
 
       - name: Unit Tests w/ NuGet
         shell: bash
         run: |
           # We want to run the unit-test using the NuGet package we just built. For this, we do the following:
-          # 1. Create a local NuGet source in the LibCZI_Net.UnitTests project directory.
+          # 1. Create a local NuGet source in the Zeiss.Micro.LibCzi.Net.UnitTests project directory.
           # 2. Copy the NuGet package to the local source directory.
-          # 3. Modify the LibCZI_Net.UnitTests.csproj to use the local NuGet source and reference the package.
-          cd dotnet/LibCZI_Net.UnitTests
-          cat > ../LibCZI_Net.UnitTests/NuGet.config<< EOF
+          # 3. Modify the Zeiss.Micro.LibCzi.Net.UnitTests.csproj to use the local NuGet source and reference the package.
+          cd dotnet/Zeiss.Micro.LibCzi.Net.UnitTests
+          cat > ../Zeiss.Micro.LibCzi.Net.UnitTests/NuGet.config<< EOF
           <?xml version="1.0" encoding="utf-8"?>
           <configuration>
             <packageSources>
@@ -423,5 +423,5 @@ jobs:
           mkdir local_packages
           cp ../../downloads/*.nupkg ./local_packages
           # replace the ProjectReference with a PackageReference to the NuGet package
-          sed -i 's|<ProjectReference\s*Include=\s*"..[./\\]LibCZI_Net[./\\]LibCZI_Net.csproj"\s*/>|<PackageReference Include="LibCZI_NET" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./LibCZI_Net.UnitTests.csproj
+          sed -i 's|<ProjectReference\s*Include=\s*"..[./\\]Zeiss.Micro.LibCzi.Net[./\\]Zeiss.Micro.LibCzi.Net.csproj"\s*/>|<PackageReference Include="Zeiss.Micro.LibCzi.Net" Version="${{ needs.prepare-native-binaries.outputs.fullversion }}" />|' ./Zeiss.Micro.LibCzi.Net.UnitTests.csproj
           dotnet test --logger "console;verbosity=detailed"
