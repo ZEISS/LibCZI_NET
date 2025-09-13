@@ -12,4 +12,4 @@ Getting-started Documentation can be found [here](docs/getting-started.md).
 
 How to Build Documentation can be found [here](docs/building.md).
 
-Code Documentation of the LibCZI_NET can be found [here](LibCZI_Net/LibCZI_Net.Interface.yml).
+Code Documentation of the LibCZI_NET can be found [here](LibCZI_Net/Zeiss.Micro.LibCzi.Net.Interface.html).

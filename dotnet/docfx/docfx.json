@@ -4,7 +4,7 @@
             "src": [
                 {
                     "files": [ "*.csproj" ],
-                    "src": "../LibCZI_Net"
+                    "src": "../Zeiss.Micro.LibCzi.Net"
                 }
             ],
             "dest": "LibCZI_Net"
