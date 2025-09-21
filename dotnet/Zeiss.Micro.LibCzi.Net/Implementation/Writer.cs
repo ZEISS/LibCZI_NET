@@ -4,11 +4,12 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary>
     /// Implementation of the IWriter-interface.

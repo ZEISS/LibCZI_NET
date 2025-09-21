@@ -4,15 +4,16 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interop;
     using System;
     using System.Runtime.InteropServices;
+
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary>
     /// Represents a safe buffer that operates on native memory.
     /// </summary>
     /// <seealso cref="System.Runtime.InteropServices.SafeBuffer" />
-    internal class SafeBufferOnNativeMemory : SafeBuffer
+    internal sealed class SafeBufferOnNativeMemory : SafeBuffer
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SafeBufferOnNativeMemory"/> class.

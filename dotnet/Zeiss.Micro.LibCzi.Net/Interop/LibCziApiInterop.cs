@@ -4,8 +4,6 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Interop
 {
-    using Implementation;
-    using Interface;
     using System;
     using System.Buffers;
     using System.Collections.Generic;
@@ -15,6 +13,9 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
     using System.Runtime.InteropServices;
     using System.Text;
     using System.Text.Json;
+
+    using Zeiss.Micro.LibCzi.Net.Implementation;
+    using Zeiss.Micro.LibCzi.Net.Interface;
 
     /// <summary>
     /// Provides interop methods for interacting with the CZI native files (.dll, .so, etc.)

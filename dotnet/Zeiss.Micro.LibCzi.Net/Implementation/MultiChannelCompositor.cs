@@ -4,11 +4,12 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary> Implementation of the 'IMultiChannelCompositor' interface using the native library.</summary>
     internal class MultiChannelCompositor : IMultiChannelCompositor
