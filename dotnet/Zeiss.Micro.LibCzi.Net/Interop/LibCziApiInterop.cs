@@ -14,6 +14,7 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
+    using System.Text.Json;
 
     /// <summary>
     /// Provides interop methods for interacting with the CZI native files (.dll, .so, etc.)
@@ -1497,22 +1498,45 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
         public IntPtr SingleChannelTileAccessorGet(IntPtr accessorHandle, ICoordinate coordinate, in IntRect roi, float zoomFactor, in AccessorOptions accessorOptions)
         {
             this.ThrowIfNotInitialized();
+            var additionalOptionsJsonUtf8 = AccessorAdditionalOptionsJsonFromPropertyBag(in accessorOptions);
             unsafe
             {
                 IntPtr bitmapHandle = IntPtr.Zero;
                 CoordinateInterop coordinateInterop = LibCziApiInterop.ToCoordinateInterop(coordinate);
                 IntRectInterop roiInterop = new IntRectInterop() { x = roi.X, y = roi.Y, w = roi.Width, h = roi.Height };
-                AccessorOptionsInterop accessorOptionsInterop = new AccessorOptionsInterop()
+                int returnCode;
+                if (additionalOptionsJsonUtf8.IsEmpty)
                 {
-                    back_ground_color_r = accessorOptions.BackGroundColorR,
-                    back_ground_color_g = accessorOptions.BackGroundColorG,
-                    back_ground_color_b = accessorOptions.BackGroundColorB,
-                    sort_by_m = accessorOptions.SortByM,
-                    use_visibility_check_optimization = accessorOptions.UseVisibilityCheckOptimization,
-                    additional_parameters = IntPtr.Zero,
-                };
+                    AccessorOptionsInterop accessorOptionsInterop = new AccessorOptionsInterop()
+                    {
+                        back_ground_color_r = accessorOptions.BackGroundColorR,
+                        back_ground_color_g = accessorOptions.BackGroundColorG,
+                        back_ground_color_b = accessorOptions.BackGroundColorB,
+                        sort_by_m = accessorOptions.SortByM,
+                        use_visibility_check_optimization = accessorOptions.UseVisibilityCheckOptimization,
+                        additional_parameters = IntPtr.Zero,
+                    };
 
-                int returnCode = this.singleChannelTileAccessorGet(accessorHandle, &coordinateInterop, &roiInterop, zoomFactor, &accessorOptionsInterop, &bitmapHandle);
+                    returnCode = this.singleChannelTileAccessorGet(accessorHandle, &coordinateInterop, &roiInterop, zoomFactor, &accessorOptionsInterop, &bitmapHandle);
+                }
+                else
+                {
+                    fixed (byte* pointerAdditionalOptionsJson = additionalOptionsJsonUtf8)
+                    {
+                        AccessorOptionsInterop accessorOptionsInterop = new AccessorOptionsInterop()
+                        {
+                            back_ground_color_r = accessorOptions.BackGroundColorR,
+                            back_ground_color_g = accessorOptions.BackGroundColorG,
+                            back_ground_color_b = accessorOptions.BackGroundColorB,
+                            sort_by_m = accessorOptions.SortByM,
+                            use_visibility_check_optimization = accessorOptions.UseVisibilityCheckOptimization,
+                            additional_parameters = new IntPtr(pointerAdditionalOptionsJson),
+                        };
+
+                        returnCode = this.singleChannelTileAccessorGet(accessorHandle, &coordinateInterop, &roiInterop, zoomFactor, &accessorOptionsInterop, &bitmapHandle);
+                    }
+                }
+
                 this.ThrowIfError(returnCode);
                 return bitmapHandle;
             }
@@ -2683,7 +2707,7 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
     }
 
     /// <content>
-    ///   Here we gather internally used utilities.
+    /// Here we gather internally used utilities.
     /// </content>
     internal partial class LibCziApiInterop
     {
@@ -2709,6 +2733,40 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
             Marshal.Copy(utf8Bytes, 0, utf8StringLibCziAllocated, utf8Bytes.Length);
             Marshal.WriteByte(utf8StringLibCziAllocated, utf8Bytes.Length, 0); // zero-terminate
             return utf8StringLibCziAllocated;
+        }
+
+        private static Span<byte> AccessorAdditionalOptionsJsonFromPropertyBag(in AccessorOptions accessorOptions)
+        {
+            if (accessorOptions.AdditionalOptionsPropertyBag == null)
+            {
+                return Span<byte>.Empty;
+            }
+
+            var jsonObject = new Dictionary<string, object>();
+            if (accessorOptions.AdditionalOptionsPropertyBag.TryGetValue(AccessorOptionsAdditionalOptionsKeys.MaskAwareness, out var maskAwarenessValue))
+            {
+                // If the value is a boolean, we can use it
+                if (maskAwarenessValue is bool maskAwareness)
+                {
+                    // If mask awareness is enabled, we need to include it in the JSON
+                    jsonObject.Add("mask_aware", maskAwareness);
+                }
+            }
+
+            if (jsonObject.Count == 0)
+            {
+                return Span<byte>.Empty;
+            }
+
+            // Serialize directly to a UTF-8 byte array.
+            byte[] jsonBytes = JsonSerializer.SerializeToUtf8Bytes(jsonObject);
+
+            // Create a new array with space for the null terminator.
+            byte[] zeroTerminatedBytes = new byte[jsonBytes.Length + 1];
+            jsonBytes.CopyTo(zeroTerminatedBytes, 0);
+
+            // The last byte is already 0, which is the null terminator.
+            return new Span<byte>(zeroTerminatedBytes);
         }
 
         private static ExternalStreamErrorInfoInterop CreateExternalStreamErrorInfoInterop(int errorCode, string errorMessage)

@@ -98,4 +98,17 @@ namespace Zeiss.Micro.LibCzi.Net.Interface
             AdditionalOptionsPropertyBag = null,
         };
     }
+
+    /// <summary>
+    /// Those string-constants are used as keys in the AdditionalOptionsPropertyBag of the AccessorOptions struct.
+    /// </summary>
+    public static class AccessorOptionsAdditionalOptionsKeys
+    {
+        /// <summary>
+        /// "MaskAwareness" (boolean): When true, enables mask-aware composition where subblock
+        /// mask data (if available) is used during tile composition to selectively copy pixels.
+        /// Only pixels where the corresponding mask bit is set will be rendered.
+        /// </summary>
+        public const string MaskAwareness = "MaskAwareness";
+    }
 }

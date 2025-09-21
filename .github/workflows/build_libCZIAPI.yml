@@ -123,6 +123,7 @@ jobs:
           cmake -A ARM64 -B "./build" `
             -DCRASH_ON_UNALIGNED_ACCESS=OFF `
             -DIS_BIG_ENDIAN=FALSE `
+            -DADDITIONAL_LIBS_REQUIRED_FOR_ATOMIC=
             -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} `
             -DLIBCZI_BUILD_CZICMD=OFF `
             -DLIBCZI_BUILD_DYNLIB=OFF `
