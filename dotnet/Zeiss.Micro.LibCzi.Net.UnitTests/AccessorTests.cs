@@ -105,5 +105,16 @@ namespace Zeiss.Micro.LibCzi.Net.UnitTests
             */
         }
 
+        [Fact]
+        public void SingleChannelScalingTileAccessorWithMaskGray8Scenario1()
+        {
+            using var inputStream =
+                Factory.CreateInputStreamFromExternalStream(new InputStreamObject(new MemoryStream(Data.GetTwoOverlappingSubBlocksGray8WithMaskDataCzi()),
+                    true));
+
+            using var reader = Factory.CreateReader();
+            reader.Open(inputStream);
+
+        }
     }
 }
