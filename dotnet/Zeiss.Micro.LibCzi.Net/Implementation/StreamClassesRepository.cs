@@ -4,9 +4,10 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Interface
 {
-    using Interop;
     using System;
     using System.Collections.Generic;
+
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary>
     /// Implementation of the IStreamClassesRepository.
