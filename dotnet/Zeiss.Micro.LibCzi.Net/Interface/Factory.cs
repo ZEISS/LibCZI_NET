@@ -4,9 +4,10 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Interface
 {
-    using Implementation;
-    using Interop;
     using System.Collections.Generic;
+
+    using Zeiss.Micro.LibCzi.Net.Implementation;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary>
     /// A factory class for creating instances of <see cref="IInputStream"/> and <see cref="IReader"/>.

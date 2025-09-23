@@ -4,12 +4,6 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Interface
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Runtime.InteropServices;
-    using System.Text;
-    using Net.Interop;
-
     /// <summary>
     /// This structure represents a version number.
     /// For versioning libCZI, SemVer2 <see href="https://semver.org/"/> is used.

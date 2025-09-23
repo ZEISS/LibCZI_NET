@@ -4,12 +4,13 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
     using System.IO;
     using System.Runtime.InteropServices;
     using System.Xml.Linq;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary>
     /// Implementation of the metadata-segment object.

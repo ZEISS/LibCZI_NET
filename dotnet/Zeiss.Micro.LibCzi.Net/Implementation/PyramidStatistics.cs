@@ -4,10 +4,11 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
     using System;
     using System.Collections.Generic;
     using System.Text.Json;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
 
     /// <content>
     /// Represents the statistics related to a pyramid structure.

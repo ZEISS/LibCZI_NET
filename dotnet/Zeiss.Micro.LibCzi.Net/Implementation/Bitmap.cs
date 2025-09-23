@@ -4,10 +4,11 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
     using System.Runtime.InteropServices;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <content>
     ///   Represents a bitmap that wraps a native bitmap handle.

@@ -4,14 +4,13 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Runtime.InteropServices;
-    using System.Text;
     using System.Xml.Linq;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <content>
     /// This section includes constructor and override methods.

@@ -4,12 +4,13 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
     using System.Text.Json;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary> Implementation of the ICziDocumentInfo interface, based on the native functionality.</summary>
     internal partial class CziDocumentInfo : SafeHandle, ICziDocumentInfo

@@ -4,10 +4,11 @@
 
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
-    using Interface;
-    using Interop;
     using System;
     using System.Runtime.InteropServices;
+
+    using Zeiss.Micro.LibCzi.Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interop;
 
     /// <summary>
     /// Represents an output stream that wraps a native output stream handle.

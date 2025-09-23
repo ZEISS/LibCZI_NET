@@ -105,5 +105,136 @@ namespace Zeiss.Micro.LibCzi.Net.UnitTests
             */
         }
 
+        [Fact]
+        public void SingleChannelScalingTileAccessorWithMaskGray8Scenario1MaskAware()
+        {
+            using var inputStream =
+                Factory.CreateInputStreamFromExternalStream(new InputStreamObject(new MemoryStream(Data.GetTwoOverlappingSubBlocksGray8WithMaskDataCzi()),
+                    true));
+
+            using var reader = Factory.CreateReader();
+            reader.Open(inputStream);
+
+            using var accessor = reader.CreateSingleChannelTileAccessor();
+
+            var accessorOptions = AccessorOptions.Default;
+            accessorOptions.BackGroundColorR = accessorOptions.BackGroundColorG = accessorOptions.BackGroundColorB = 0.5f;
+            accessorOptions.AdditionalOptionsPropertyBag = new Dictionary<string, object>
+            {
+                {AccessorOptionsAdditionalOptionsKeys.MaskAwareness, true},
+            };
+
+            using var bitmap = accessor.Get(
+                new Coordinate([new DimensionAndValue(DimensionIndex.C, 0)]),
+                new IntRect(0, 0, 6, 6),
+                1,
+                accessorOptions);
+
+            bitmap.BitmapInfo.PixelType.Should().Be(PixelType.Gray8);
+            bitmap.BitmapInfo.Width.Should().Be(6);
+            bitmap.BitmapInfo.Height.Should().Be(6);
+
+            var bitmapLockInfo = bitmap.Lock();
+            try
+            {
+                // The expected result is a 6x6 image where:
+                // - The background is gray (128,128,128).
+                // - then, the first sub-block (black, 0) is drawn at (0,0) - (4,4)
+                // - then, the second sub-block (white, 255) is drawn at (2,2) - (6,6) with the checkerboard mask applied
+                byte[] expectedResult =
+                [
+                    0x00, 0x00, 0x00, 0x00, 0x80, 0x80,
+                    0x00, 0x00, 0x00, 0x00, 0x80, 0x80,
+                    0x00, 0x00, 0xff, 0x00, 0xff, 0x80,
+                    0x00, 0x00, 0x00, 0xff, 0x80, 0xff,
+                    0x80, 0x80, 0xff, 0x80, 0xff, 0x80,
+                    0x80, 0x80, 0x80, 0xff, 0x80, 0xff,
+                ];
+
+                unsafe
+                {
+                    fixed (byte* pExpected = expectedResult)
+                    {
+                        for (int y = 0; y < 6; y++)
+                        {
+                            Span<byte> resultData = new((void*)(bitmapLockInfo.BitmapData + y * bitmapLockInfo.Stride), 6);
+                            Span<byte> expectedResultData = new(pExpected + y * 6, 6);
+                            bool areEqual = resultData.SequenceEqual(expectedResultData);
+                            areEqual.Should().BeTrue();
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                bitmap.Unlock();
+            }
+        }
+
+        [Fact]
+        public void SingleChannelScalingTileAccessorWithMaskGray8Scenario1MaskUnaware()
+        {
+            using var inputStream =
+                Factory.CreateInputStreamFromExternalStream(new InputStreamObject(new MemoryStream(Data.GetTwoOverlappingSubBlocksGray8WithMaskDataCzi()),
+                    true));
+
+            using var reader = Factory.CreateReader();
+            reader.Open(inputStream);
+
+            using var accessor = reader.CreateSingleChannelTileAccessor();
+
+            var accessorOptions = AccessorOptions.Default;
+            accessorOptions.BackGroundColorR = accessorOptions.BackGroundColorG = accessorOptions.BackGroundColorB = 0.5f;
+            accessorOptions.AdditionalOptionsPropertyBag = new Dictionary<string, object>
+            {
+                {AccessorOptionsAdditionalOptionsKeys.MaskAwareness, false},
+            };
+
+            using var bitmap = accessor.Get(
+                new Coordinate([new DimensionAndValue(DimensionIndex.C, 0)]),
+                new IntRect(0, 0, 6, 6),
+                1,
+                accessorOptions);
+
+            bitmap.BitmapInfo.PixelType.Should().Be(PixelType.Gray8);
+            bitmap.BitmapInfo.Width.Should().Be(6);
+            bitmap.BitmapInfo.Height.Should().Be(6);
+
+            var bitmapLockInfo = bitmap.Lock();
+            try
+            {
+                // The expected result is a 6x6 image where:
+                // - The background is gray (128,128,128).
+                // - then, the first sub-block (black, 0) is drawn at (0,0) - (4,4)
+                // - then, the second sub-block (white, 255) is drawn at (2,2) - (6,6) *without* the checkerboard mask applied
+                byte[] expectedResult =
+                [
+                    0x00, 0x00, 0x00, 0x00, 0x80, 0x80,
+                    0x00, 0x00, 0x00, 0x00, 0x80, 0x80,
+                    0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
+                    0x00, 0x00, 0xff, 0xff, 0xff, 0xff,
+                    0x80, 0x80, 0xff, 0xff, 0xff, 0xff,
+                    0x80, 0x80, 0xff, 0xff, 0xff, 0xff,
+                ];
+
+                unsafe
+                {
+                    fixed (byte* pExpected = expectedResult)
+                    {
+                        for (int y = 0; y < 6; y++)
+                        {
+                            Span<byte> resultData = new((void*)(bitmapLockInfo.BitmapData + y * bitmapLockInfo.Stride), 6);
+                            Span<byte> expectedResultData = new(pExpected + y * 6, 6);
+                            bool areEqual = resultData.SequenceEqual(expectedResultData);
+                            areEqual.Should().BeTrue();
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                bitmap.Unlock();
+            }
+        }
     }
 }
