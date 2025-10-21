@@ -6,7 +6,8 @@ namespace Zeiss.Micro.LibCzi.Net.Interface
 {
     using System;
     using System.Collections.Generic;
-    using System.Text.Json;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// This interface is used for retrieving parsed and consolidated metadata information from a CZI document.
@@ -31,7 +32,7 @@ namespace Zeiss.Micro.LibCzi.Net.Interface
         /// <summary> Gets "dimension-info" for the specified dimension.</summary>
         /// <param name="dimensionIndex"> The dimension to request "dimension info" for.</param>
         /// <returns> The dimension information, formatted as JSON.</returns>
-        JsonDocument GetDimensionInfo(DimensionIndex dimensionIndex);
+        JObject GetDimensionInfo(DimensionIndex dimensionIndex);
 
         /// <summary> Gets the display settings.</summary>
         /// <returns> The display settings.</returns>

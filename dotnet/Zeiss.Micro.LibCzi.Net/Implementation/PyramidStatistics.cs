@@ -6,7 +6,8 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
     using System;
     using System.Collections.Generic;
-    using System.Text.Json;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     using Zeiss.Micro.LibCzi.Net.Interface;
 
@@ -29,43 +30,53 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
             this.pyramidLayerStatisticsPerScene = new Dictionary<int, IReadOnlyList<IPyramidLayerStatistics>>();
 
             // Parse the JSON string
-            using (JsonDocument document = JsonDocument.Parse(json))
+            JObject root = JObject.Parse(json);
+
+            // Navigate to the "scenePyramidStatistics" object
+            JToken scenePyramidStatistics = root["scenePyramidStatistics"];
+            if (scenePyramidStatistics == null || scenePyramidStatistics.Type != JTokenType.Object)
             {
-                // Navigate to the "scenePyramidStatistics" object
-                JsonElement root = document.RootElement;
-                JsonElement scenePyramidStatistics = root.GetProperty("scenePyramidStatistics");
+                throw new FormatException("Missing or invalid 'scenePyramidStatistics' object.");
+            }
 
-                // Iterate through the keys (e.g., "0", "1") and arrays
-                foreach (JsonProperty property in scenePyramidStatistics.EnumerateObject())
+            // Iterate through the keys (e.g., "0", "1") and arrays
+            foreach (var property in ((JObject)scenePyramidStatistics).Properties())
+            {
+                List<IPyramidLayerStatistics> pyramidLayerStatistics = new List<IPyramidLayerStatistics>();
+
+                string key = property.Name;
+                if (string.IsNullOrWhiteSpace(key))
                 {
-                    List<IPyramidLayerStatistics> pyramidLayerStatistics = new List<IPyramidLayerStatistics>();
-
-                    string key = property.Name;
-                    if (string.IsNullOrWhiteSpace(key))
-                    {
-                        throw new FormatException("'key' cannot be null or whitespace.");
-                    }
-
-                    int sceneIndex = int.Parse(key);
-
-                    JsonElement array = property.Value;
-
-                    // Iterate through each array element
-                    foreach (JsonElement element in array.EnumerateArray())
-                    {
-                        JsonElement layerInfo = element.GetProperty("layerInfo");
-                        byte minificationFactor = layerInfo.GetProperty("minificationFactor").GetByte();
-                        byte pyramidLayerNo = layerInfo.GetProperty("pyramidLayerNo").GetByte();
-                        int count = element.GetProperty("count").GetInt32();
-
-                        PyramidLayerStatistics pyramidLayerStatistic = new PyramidLayerStatistics(
-                            count,
-                            new PyramidLayerInfo(minificationFactor, pyramidLayerNo));
-                        pyramidLayerStatistics.Add(pyramidLayerStatistic);
-                    }
-
-                    this.pyramidLayerStatisticsPerScene.Add(sceneIndex, pyramidLayerStatistics);
+                    throw new FormatException("'key' cannot be null or whitespace.");
                 }
+
+                int sceneIndex = int.Parse(key);
+
+                JArray array = property.Value as JArray;
+                if (array == null)
+                {
+                    throw new FormatException("Expected an array for scene '" + key + "'.");
+                }
+
+                // Iterate through each array element
+                foreach (JToken element in array)
+                {
+                    JToken layerInfo = element["layerInfo"];
+                    if (layerInfo == null)
+                    {
+                        throw new FormatException("Missing 'layerInfo' in pyramid layer statistics.");
+                    }
+                    byte minificationFactor = layerInfo["minificationFactor"].Value<byte>();
+                    byte pyramidLayerNo = layerInfo["pyramidLayerNo"].Value<byte>();
+                    int count = element["count"].Value<int>();
+
+                    PyramidLayerStatistics pyramidLayerStatistic = new PyramidLayerStatistics(
+                        count,
+                        new PyramidLayerInfo(minificationFactor, pyramidLayerNo));
+                    pyramidLayerStatistics.Add(pyramidLayerStatistic);
+                }
+
+                this.pyramidLayerStatisticsPerScene.Add(sceneIndex, pyramidLayerStatistics);
             }
         }
 

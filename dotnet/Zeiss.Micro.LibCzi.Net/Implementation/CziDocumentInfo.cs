@@ -7,7 +7,8 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices;
-    using System.Text.Json;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     using Zeiss.Micro.LibCzi.Net.Interface;
     using Zeiss.Micro.LibCzi.Net.Interop;
@@ -62,25 +63,18 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
 
             // Parse the JSON string, and store the key-value pairs in the dictionary.
             // We assume here that the root element must be an object.
-            using (JsonDocument document = JsonDocument.Parse(json))
-            {
-                JsonElement root = document.RootElement;
+            JObject root = JObject.Parse(json);
 
-                if (root.ValueKind == JsonValueKind.Object)
+            foreach (var property in root.Properties())
+            {
+                if (property.Name == CziDocumentPropertyKeys.GeneralDocumentInfoCreationDateTime)
                 {
-                    foreach (JsonProperty property in root.EnumerateObject())
-                    {
-                        // Perform additional parsing for specific nodes if needed
-                        if (property.Name == CziDocumentPropertyKeys.GeneralDocumentInfoCreationDateTime)
-                        {
-                            // Parse the "creation_data_time" node as a DateTime
-                            dictionary[property.Name] = CziDocumentInfo.ParseCreationDateTime(property.Value);
-                        }
-                        else
-                        {
-                            dictionary[property.Name] = CziDocumentInfo.GetValue(property.Value);
-                        }
-                    }
+                    // Parse the "creation_data_time" node as a DateTime
+                    dictionary[property.Name] = CziDocumentInfo.ParseCreationDateTime(property.Value);
+                }
+                else
+                {
+                    dictionary[property.Name] = CziDocumentInfo.GetValue(property.Value);
                 }
             }
 
@@ -94,10 +88,10 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
         }
 
         /// <inheritdoc/>
-        public JsonDocument GetDimensionInfo(DimensionIndex dimensionIndex)
+        public JObject GetDimensionInfo(DimensionIndex dimensionIndex)
         {
             string jsonText = LibCziApiInterop.Instance.CziDocumentInfoGetDimensionInfo(this.handle, dimensionIndex);
-            return JsonDocument.Parse(jsonText);
+            return JObject.Parse(jsonText);
         }
 
         /// <inheritdoc/>
@@ -107,53 +101,63 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
             return new DisplaySettings(displaySettingsHandle);
         }
 
-        private static DateTime ParseCreationDateTime(JsonElement element)
+        private static DateTime ParseCreationDateTime(JToken token)
         {
-            if (element.ValueKind == JsonValueKind.String)
+            if (token.Type == JTokenType.String)
             {
-                string dateTimeString = element.GetString();
-                if (DateTime.TryParse(dateTimeString, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime dateTime))
+                string dateTimeString = token.Value<string>();
+                if (DateTime.TryParseExact(dateTimeString, "O", null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime dt))
                 {
-                    return dateTime;
+                    return dt;
                 }
+
+                if (DateTime.TryParse(dateTimeString, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dt))
+                {
+                    return dt;
+                }
+
+                if (DateTime.TryParse(dateTimeString, System.Globalization.CultureInfo.CurrentCulture, System.Globalization.DateTimeStyles.RoundtripKind, out dt))
+                {
+                    return dt;
+                }
+
+                throw new FormatException($"Invalid date time format for 'creation_data_time': '{dateTimeString}'.");
+            }
+
+            if (token.Type == JTokenType.Date)
+            {
+                // Use the already-parsed DateTime value
+                return token.Value<DateTime>();
             }
 
             throw new FormatException("Invalid date time format for 'creation_data_time'.");
         }
 
-        private static object GetValue(JsonElement element)
+        private static object GetValue(JToken token)
         {
-            switch (element.ValueKind)
+            switch (token.Type)
             {
-                case JsonValueKind.String:
-                    return element.GetString();
-                case JsonValueKind.Number:
-                    if (element.TryGetInt32(out int intValue))
+                case JTokenType.String:
+                    return token.Value<string>();
+                case JTokenType.Integer:
+                    // Try to fit into int, long, or just return as Int64
+                    long longValue = token.Value<long>();
+                    if (longValue >= int.MinValue && longValue <= int.MaxValue)
                     {
-                        return intValue;
+                        return (int)longValue;
                     }
 
-                    if (element.TryGetInt64(out long longValue))
-                    {
-                        return longValue;
-                    }
-
-                    if (element.TryGetDouble(out double doubleValue))
-                    {
-                        return doubleValue;
-                    }
-
-                    break;
-                case JsonValueKind.True:
-                    return true;
-                case JsonValueKind.False:
-                    return false;
-                case JsonValueKind.Null:
+                    return longValue;
+                case JTokenType.Float:
+                    return token.Value<double>();
+                case JTokenType.Boolean:
+                    return token.Value<bool>();
+                case JTokenType.Null:
                     return null;
+                default:
+                    // Default case: return the token as a string
+                    return token.ToString();
             }
-
-            // Default case: return the element as a string
-            return element.ToString();
         }
     }
 }

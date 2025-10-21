@@ -12,7 +12,7 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using System.Text;
-    using System.Text.Json;
+    using Newtonsoft.Json;
 
     using Zeiss.Micro.LibCzi.Net.Implementation;
     using Zeiss.Micro.LibCzi.Net.Interface;
@@ -2760,7 +2760,8 @@ namespace Zeiss.Micro.LibCzi.Net.Interop
             }
 
             // Serialize directly to a UTF-8 byte array.
-            byte[] jsonBytes = JsonSerializer.SerializeToUtf8Bytes(jsonObject);
+            string jsonString = JsonConvert.SerializeObject(jsonObject);
+            byte[] jsonBytes = Encoding.UTF8.GetBytes(jsonString);
 
             // Create a new array with space for the null terminator.
             byte[] zeroTerminatedBytes = new byte[jsonBytes.Length + 1];
