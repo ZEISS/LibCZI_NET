@@ -106,7 +106,7 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
             if (token.Type == JTokenType.String)
             {
                 string dateTimeString = token.Value<string>();
-                if (DateTime.TryParseExact(dateTimeString, "O", null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime dt))
+                if (DateTime.TryParseExact(dateTimeString, "O", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime dt))
                 {
                     return dt;
                 }
