@@ -5,7 +5,7 @@
 namespace Zeiss.Micro.LibCzi.Net.Implementation
 {
     using System.Collections.Generic;
-    using System.Text.Json;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Here we collect some internal utilities that are used internally in the implementation of the library.
@@ -24,7 +24,7 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
                 return string.Empty;
             }
 
-            var jsonString = JsonSerializer.Serialize(parametersPropertyBag);
+            var jsonString = JsonConvert.SerializeObject(parametersPropertyBag);
             return jsonString;
         }
     }
