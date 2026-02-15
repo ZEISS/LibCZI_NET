@@ -120,7 +120,7 @@ namespace Zeiss.Micro.LibCzi.Net.UnitTests
         /// count, metadata (with truncation constraints), and payload integrity.
         /// </summary>
         [Fact]
-        public void Write15RandomAttachmentsThenReadThenAndCompare()
+        public void Write15RandomAttachmentsThenReadThemAndCompare()
         {
             const int numberOfAttachments = 15;
 
