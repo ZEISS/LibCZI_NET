@@ -9,7 +9,7 @@ namespace Zeiss.Micro.LibCzi.Net.UnitTests
     using System.Linq;
     using System.Security.Cryptography;
     using FluentAssertions;
-    using Net.Interface;
+    using Zeiss.Micro.LibCzi.Net.Interface;
     using Xunit.Abstractions;
 
     public class AttachmentsTests
@@ -113,6 +113,114 @@ namespace Zeiss.Micro.LibCzi.Net.UnitTests
             ];
 
             hash.Should().Equal(expectedHash);
+        }
+
+        /// <summary>
+        /// Writes multiple random attachments into a CZI stream, then reads them back to verify
+        /// count, metadata (with truncation constraints), and payload integrity.
+        /// </summary>
+        [Fact]
+        public void Write15RandomAttachmentsThenReadThenAndCompare()
+        {
+            const int numberOfAttachments = 15;
+
+            // Generate randomized attachment metadata to write into the stream.
+            List<AddAttachmentInfo> addAttachmentInfosToWrite = new List<AddAttachmentInfo>();
+            var random = new Random(12345);
+            const string randomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (int i = 0; i < numberOfAttachments; i++)
+            {
+                int contentLength = random.Next(1, 21);
+                int nameLength = random.Next(1, 100);
+                string contentFileType = new string(Enumerable.Range(0, contentLength)
+                    .Select(_ => randomChars[random.Next(randomChars.Length)])
+                    .ToArray());
+                string name = new string(Enumerable.Range(0, nameLength)
+                    .Select(_ => randomChars[random.Next(randomChars.Length)])
+                    .ToArray());
+                addAttachmentInfosToWrite.Add(new AddAttachmentInfo
+                {
+                    Guid = Guid.NewGuid(),
+                    ContentFileType = contentFileType,
+                    Name = name,
+                });
+            }
+
+            // Create randomized payload data for each attachment.
+            List<byte[]> attachmentDataToWrite = new List<byte[]>(addAttachmentInfosToWrite.Count);
+            for (int i = 0; i < addAttachmentInfosToWrite.Count; i++)
+            {
+                int dataLength = random.Next(1, 201);
+                byte[] data = new byte[dataLength];
+                random.NextBytes(data);
+                attachmentDataToWrite.Add(data);
+            }
+
+            using MemoryStream memoryStream = new MemoryStream();
+
+            {
+                // Write attachments into an in-memory CZI stream.
+                using IOutputStream? outputStream = Factory.CreateOutputStreamFromExternalStream(new OutputStreamObject(memoryStream, false));
+                using IWriter? writer = Factory.CreateWriter();
+                writer.Open(outputStream);
+
+                for (int i = 0; i < numberOfAttachments; i++)
+                {
+                    writer.AddAttachment(addAttachmentInfosToWrite[i], attachmentDataToWrite[i]);
+                }
+
+                writer.Close();
+            }
+
+            Assert.True(memoryStream.Length > 0);
+
+            // Now, open the CZI (from memory) and check content
+            {
+                // Note that we are NOT giving away ownership of the memoryStream here (by using the InputStreamObject constructor with takeOwnership = false),
+                //  since we still have a using-clause for it in this scope.
+                using IInputStream? inputStream = Factory.CreateInputStreamFromExternalStream(new InputStreamObject(memoryStream, false));
+
+                using IReader? reader = Factory.CreateReader();
+                reader.Open(inputStream);
+
+                int attachmentsCount = reader.GetAttachmentsCount();
+                Assert.Equal(numberOfAttachments, attachmentsCount);
+
+                // Verify attachment info and payload round-trip with truncation constraints.
+                for (int i = 0; i < numberOfAttachments; i++)
+                {
+                    bool foundAttachment = reader.TryGetAttachmentInfoForIndex(i, out AttachmentInfo attachmentInfo);
+                    Assert.True(foundAttachment);
+
+                    int attachmentIndex = addAttachmentInfosToWrite.FindIndex(info => info.Guid == attachmentInfo.Guid);
+                    Assert.True(attachmentIndex >= 0);
+
+                    AddAttachmentInfo expectedAttachmentInfo = addAttachmentInfosToWrite[attachmentIndex];
+                    string expectedContentFileType = Truncate(expectedAttachmentInfo.ContentFileType, 8);
+                    string expectedName = Truncate(expectedAttachmentInfo.Name, 79);
+
+                    attachmentInfo.ContentFileType.Should().Be(expectedContentFileType);
+                    attachmentInfo.Name.Should().Be(expectedName);
+
+                    using IAttachment? attachment = reader.ReadAttachment(i);
+                    attachment.Should().NotBeNull();
+                    attachment.AttachmentInfo.ContentFileType.Should().Be(expectedContentFileType);
+                    attachment.AttachmentInfo.Name.Should().Be(expectedName);
+                    attachment.AttachmentInfo.Guid.Should().Be(expectedAttachmentInfo.Guid);
+                    Span<byte> dataOfAttachment = attachment.GetRawData();
+                    dataOfAttachment.ToArray().Should().Equal(attachmentDataToWrite[attachmentIndex]);
+                }
+
+                static string Truncate(string value, int maxLength)
+                {
+                    if (string.IsNullOrEmpty(value))
+                    {
+                        return string.Empty;
+                    }
+
+                    return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+                }
+            }
         }
     }
 }
