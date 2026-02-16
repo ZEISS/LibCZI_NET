@@ -66,6 +66,7 @@ namespace Zeiss.Micro.LibCzi.Net.Implementation
                     {
                         throw new FormatException("Missing 'layerInfo' in pyramid layer statistics.");
                     }
+
                     byte minificationFactor = layerInfo["minificationFactor"].Value<byte>();
                     byte pyramidLayerNo = layerInfo["pyramidLayerNo"].Value<byte>();
                     int count = element["count"].Value<int>();
